@@ -1,18 +1,9 @@
+    // retrieve data
+    var vertex = dataDict['{{vertex}}'];
 
-var vertex = dataDict['{{vertex}}'];
-var scatter = new SCIWIZ.Scatter({vertex : vertex});
+    // create scatter object and set material
+    var scatter = new SCIWIZ.Scatter({vertex : vertex});
+    scatter.properties.material = SCIWIZ.PointMaterial;
 
-// material properties
-var matprop = {
-    color : 0x01BA23,
-    size : 0.05,
-    sizeAttenuation : true,
-    fog : true,
-    vertexColors : THREE.NoColors
-};
-var material = new THREE.PointsMaterial(matprop);
-
-// add material to scatter
-scatter.properties.material = material;
-
-axes.addObject(scatter);
+    // add to axes
+    axes.addObject(scatter);

@@ -12,9 +12,11 @@ var axes = fig.addAxes(axesProp);
 
 // Render objects
 {% for obj in objects %}
+///////////////////////////////////////
 {
-    {{obj}}
+{{obj}}
 };
+///////////////////////////////////////
 {% endfor %}
 
 

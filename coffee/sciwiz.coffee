@@ -16,6 +16,7 @@ appendModule = (root, module) ->
 
 # append modules
 appendModule(SCIWIZ, require('./figure'))
+appendModule(SCIWIZ, require('./material'))
 appendModule(SCIWIZ, require('./scatter'))
 
 module.exports = SCIWIZ
