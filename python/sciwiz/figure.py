@@ -1,4 +1,5 @@
 
+
 import uuid
 
 import IPython.display as display
@@ -9,18 +10,13 @@ import numpy as np
 import numjis as nj
 
 
-__all__ = ['Figure', 'Axes3D']
+__all__ = ['Figure', 'Axes', 'RenderObject', 'Scatter']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
 
 
 class Figure(object):
-    """
-    Figure class
-
-    A Figure contains global properties such as layout and Axes.
-    """
 
     def __init__(self):
 
@@ -104,28 +100,30 @@ class Figure(object):
 
         return dataUUID
 
+
     def addAxes(self, **kwargs):
         """
         Add a new axes to the figure.
         """
-        ax = Axes3D(self, **kwargs)
+        ax = Axes(self, **kwargs)
         self.__axes.append(ax)
         return ax
 
+
     def show(self):
-        """
-        Shows figure.
-        """
 
         figPanelTemp = _templateEnv.get_template('html/figure.html')
-        figPanel = figPanelTemp.render(ID=self.__ID)
+        figPanel = figPanelTemp.render(id=self.__ID)
 
         HTML = display.HTML(data=figPanel)
         display.display(HTML)
 
-        renderJSlist = []
+        ##########################
+        # Javascript rendering
+        ##########################
+        JScode = list()
 
-        # render data sources
+        # data sources
         # creates a dictionary with JSON code for each data source
         dataDictJson = dict()
         for d in self.__dataDict.viewitems():
@@ -133,41 +131,51 @@ class Figure(object):
 
         dataSourceTemplate = _templateEnv.get_template('js/datasource.js')
         dataJS = dataSourceTemplate.render(DATA=dataDictJson)
-        renderJSlist.append(dataJS)
+        JScode.append(dataJS)
 
-        # render each axes
-        for ax in self.__axes:
-            renderJSlist.append(ax.render())
+        # Figure creation
+        jsTemp = _templateEnv.get_template('js/figure.js')
+        JScode.append(jsTemp.render(id=self.__ID))
 
-        JScode = ''.join(renderJSlist)
+        # Axes
+        for axes in self.__axes:
+            JScode.append(axes.render())
 
-        # print(JScode)
+        JSsrc = ''.join(JScode)
 
+        print(JSsrc)
 
         libs = ['http://threejs.org/build/three.min.js',
                 'js/numjis_bundle.js',
-                'js/OrbitControls.js']
-        JS = display.Javascript(data = JScode, lib = libs)
+                'js/OrbitControls.js',
+                'js/sciwiz_bundle.js']
+        JS = display.Javascript(data = JSsrc, lib = libs)
         display.display(JS)
 
 
 
-class Axes3D(object):
+class RenderObject(object):
     """
-    An Axes3D object contains the different objects that make the
-    scene such as axis, data points, etc.
+    Base class for render classes
     """
+
+    def __init__(self):
+        pass
+
+    def render(self):
+        """
+        returns Javascript code for rendering the object.
+        """
+        pass
+
+
+class Axes(RenderObject):
 
     def __init__(self, fig, **kwargs):
-
+        
         self.__fig = fig
         self.__renderObjects = list()
 
-        # unroll kwargs
-        self.__bgcolor = kwargs.get('bgcolor', '0xFFFFFF')
-        self.__width = int(kwargs.get('width', 800))
-        self.__height = int(kwargs.get('height', 800))
-        
 
     ###################################
     # PROPERTIES
@@ -183,6 +191,7 @@ class Axes3D(object):
     @data.setter
     def data(self, value):
         raise Exception('data source dictionary cannot be set')
+
 
     ###################################
     # METHODS
@@ -207,24 +216,30 @@ class Axes3D(object):
         return self.__fig.addData(data)
 
 
+    def addRenderObject(self, obj):
+
+        # TODO: add validation
+        self.__renderObjects.append(obj)
+
+
     def render(self):
+        
+        ##########################
+        # Javascript rendering
+        ##########################
+        JScode = list()
 
-        renderCodeList=list()
-
-        # Append the render codes for each object
+        # render each render object
+        JSrenderObj = list()
         for obj in self.__renderObjects:
-            renderCodeList.append(obj.renderCode())
+            JSrenderObj.append(obj.render())
+            # print(obj.render())
 
+        # axes rendering
+        axesTemp = _templateEnv.get_template('js/axes.js')
+        JScode.append(axesTemp.render(objects = JSrenderObj))
 
-        jsTemp = _templateEnv.get_template('js/axes3D.js')
-        js = jsTemp.render(id = self.__fig.ID,
-            width = self.__width,
-            height = self.__height,
-            bgcolor = self.__bgcolor,
-            objects = renderCodeList)
-
-        return js
-
+        return ''.join(JScode)
 
 
     def scatter(self, vertex, **kwargs):
@@ -232,132 +247,98 @@ class Axes3D(object):
         if type(vertex) != np.ndarray:
             raise TypeError('Expecting a Numpy NDArray object')
 
-        # add vertex to data sources
-        vertexID = self.__fig.addData(vertex)
-
-        # adds a Scatter3D render object
-        self.__renderObjects.append(Scatter3D(self, vertexID, **kwargs))
+        # adds a Scatter render object
+        self.__renderObjects.append(Scatter(self, vertex, **kwargs))
 
 
 
-    def surface(self, vertex, **kwargs):
+class Scatter(RenderObject):
 
-        if type(vertex) != np.ndarray:
-            raise TypeError('Expecting a Numpy NDArray object')
-
-        # add vertex to data sources
-        vertexID = self.__fig.addData(vertex)
-
-        # adds a Surface3D render object
-        self.__renderObjects.append(Surface3D(self, vertexID, **kwargs))
-
-
-
-
-class RenderObject(object):
-    """
-    Base class for render classes
-    """
-
-    def __init__(self):
-        pass
-
-    def renderCode(self):
-        pass
-
-
-
-class Scatter3D(RenderObject):
-
-    def __init__(self, axes, dataID, **kwargs):
+    def __init__(self, axes, vertex, **kwargs):
 
         self.__axes = axes
-        self.__dataID = dataID
+
+        # add vertex array to data sources
+        self.__dataID = self.__axes.addData(vertex)
 
         # unroll kwargs
+        # TODO: add material management
 
         # TODO: add color management
-        self.__color = kwargs.get('color', '0x000000')
-        self.__size = kwargs.get('size', 0.01)
-        self.__sizeAttenuation = str(kwargs.get('sizeAttenuation', True)).lower()
-        self.__fog = str(kwargs.get('fog', True)).lower()
+        # self.__color = kwargs.get('color', '0x000000')
+        # self.__size = kwargs.get('size', 0.01)
+        # self.__sizeAttenuation = str(kwargs.get('sizeAttenuation', True)).lower()
+        # self.__fog = str(kwargs.get('fog', True)).lower()
 
 
-    def renderCode(self):
+    def render(self):
 
-        renderTemplate = _templateEnv.get_template('js/scatter3D.js')
-        JScode = renderTemplate.render(
-            vertex = self.__dataID,
-            color = self.__color,
-            size = self.__size,
-            size_attenuation = self.__sizeAttenuation,
-            fog = self.__fog
-            )
+        renderTemplate = _templateEnv.get_template('js/scatter.js')
+        JSsrc = renderTemplate.render(vertex = self.__dataID)
 
-        return JScode
+        return JSsrc
 
 
+# class Surface(RenderObject):
 
-class Surface3D(RenderObject):
+#     def __init__(self, axes, dataID, **kwargs):
 
-    def __init__(self, axes, dataID, **kwargs):
+#         self.__axes = axes
+#         self.__dataID = dataID
 
-        self.__axes = axes
-        self.__dataID = dataID
+#         # unroll kwargs
 
-        # unroll kwargs
+#         # TODO: add color management
+#         self.__color = kwargs.get('color', '0x01BA23')
+#         self.__wireframe = str(kwargs.get('wireframe', False)).lower()
+#         self.__wirewidth = kwargs.get('wirewidth', 0.01)
 
-        # TODO: add color management
-        self.__color = kwargs.get('color', '0x01BA23')
-        self.__wireframe = str(kwargs.get('wireframe', False)).lower()
-        self.__wirewidth = kwargs.get('wirewidth', 0.01)
+#         self.__hasTexture = True if 'texture' in  kwargs.keys() else False
 
-        self.__hasTexture = True if 'texture' in  kwargs.keys() else False
+#         ###############################
+#         # TEXTURE VALIDATION
+#         ###############################
+#         self.__textureID = None
 
-        ###############################
-        # TEXTURE VALIDATION
-        ###############################
-        self.__textureID = None
-
-        if self.__hasTexture:
+#         if self.__hasTexture:
             
-            # validate texture and create data source
-            texData = kwargs['texture']
-            if self.__validateTexture(texData):
+#             # validate texture and create data source
+#             texData = kwargs['texture']
+#             if self.__validateTexture(texData):
 
-                # create data source for texture
-                self.__textureID = self.__axes.addData(texData)
+#                 # create data source for texture
+#                 self.__textureID = self.__axes.addData(texData)
                 
 
-    def renderCode(self):
+#     def render(self):
 
-        renderTemplate = _templateEnv.get_template('js/surface3D.js')
-        JScode = renderTemplate.render(
-            vertex = self.__dataID,
-            color = self.__color,
-            wireframe = self.__wireframe,
-            wirewidth = self.__wirewidth,
-            hasTexture = self.__hasTexture,
-            textureID = self.__textureID
-            )
+#         renderTemplate = _templateEnv.get_template('js/surface3D.js')
+#         JScode = renderTemplate.render(
+#             vertex = self.__dataID,
+#             color = self.__color,
+#             wireframe = self.__wireframe,
+#             wirewidth = self.__wirewidth,
+#             hasTexture = self.__hasTexture,
+#             textureID = self.__textureID
+#             )
 
-        return JScode
+#         return JScode
 
 
-    def __validateTexture(self, texData):
+#     def __validateTexture(self, texData):
 
-        # check texture object type
-        if type(texData) != np.ndarray:
-            raise TypeError('Texture data should be a Numpy ndarray object')
+#         # check texture object type
+#         if type(texData) != np.ndarray:
+#             raise TypeError('Texture data should be a Numpy ndarray object')
 
-        # check texture dimensions
-        if not texData.ndim in [2, 3]:
-            raise ValueError('Expecting 2 or three dimentional nd array')
+#         # check texture dimensions
+#         if not texData.ndim in [2, 3]:
+#             raise ValueError('Expecting 2 or three dimentional nd array')
 
-        # check texture channels
-        if texData.ndim == 3:
-            channels = texData.shape[2]
-            if not channels in [1, 3, 4]:
-                raise ValueError('Texture channels musht be [1, 3, 4], got: ' + depth)
+#         # check texture channels
+#         if texData.ndim == 3:
+#             channels = texData.shape[2]
+#             if not channels in [1, 3, 4]:
+#                 raise ValueError('Texture channels musht be [1, 3, 4], got: ' + depth)
 
-        return True
+#         return True

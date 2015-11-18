@@ -1,6 +1,12 @@
 # Python
 *.pyc
 
+# Local files
+local
+
+# generated Javascript lib folder
+lib
+
 #############################
 # IPython
 #############################
