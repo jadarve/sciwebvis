@@ -26,8 +26,9 @@ class Figure(object):
         # axes list
         self.__axes = list()
 
-        # data source dictionary
-        self.__dataDict = dict()
+        self.__dataDict = dict()      # data source dictionary
+        self.__materialDict = dict()  # material dictionary
+
 
     ###################################
     # PROPERTIES
@@ -54,6 +55,7 @@ class Figure(object):
     @data.setter
     def data(self, value):
         raise Exception('data source dictionary cannot be set')
+
 
     ###################################
     # METHODS
@@ -85,8 +87,7 @@ class Figure(object):
             if d[1] is data:
                 return d[0]
 
-        # if code reach this point, new data source
-        # need to be created
+        # if code reached this point, new data source needs to be created
 
         # create a new UUID
         dataUUID = str(uuid.uuid4())
@@ -99,6 +100,15 @@ class Figure(object):
         self.__dataDict[dataUUID] = data
 
         return dataUUID
+
+
+    def addMaterial(self, material):
+        """
+        Add a new material to figure.
+        """
+
+        # TODO: add material to material dictionary
+        pass
 
 
     def addAxes(self, **kwargs):
@@ -154,7 +164,7 @@ class Figure(object):
 
 
 
-class RenderObject(object):
+class JSRenderable(object):
     """
     Base class for render classes
     """
@@ -169,7 +179,7 @@ class RenderObject(object):
         pass
 
 
-class Axes(RenderObject):
+class Axes(JSRenderable):
 
     def __init__(self, fig, **kwargs):
         
@@ -216,6 +226,18 @@ class Axes(RenderObject):
         return self.__fig.addData(data)
 
 
+    def addMaterial(self, material):
+        """
+        Add a new material to axes.
+
+        This method calls parent figure.addMaterial(). The
+        added material will be available to all axes of the
+        figure.
+        """
+
+        return self.__fig.addMaterial(material)
+
+
     def addRenderObject(self, obj):
 
         # TODO: add validation
@@ -252,7 +274,7 @@ class Axes(RenderObject):
 
 
 
-class Scatter(RenderObject):
+class Scatter(JSRenderable):
 
     def __init__(self, axes, vertex, **kwargs):
 
@@ -264,12 +286,6 @@ class Scatter(RenderObject):
         # unroll kwargs
         # TODO: add material management
 
-        # TODO: add color management
-        # self.__color = kwargs.get('color', '0x000000')
-        # self.__size = kwargs.get('size', 0.01)
-        # self.__sizeAttenuation = str(kwargs.get('sizeAttenuation', True)).lower()
-        # self.__fog = str(kwargs.get('fog', True)).lower()
-
 
     def render(self):
 
@@ -279,7 +295,7 @@ class Scatter(RenderObject):
         return JSsrc
 
 
-# class Surface(RenderObject):
+# class Surface(JSRenderable):
 
 #     def __init__(self, axes, dataID, **kwargs):
 
