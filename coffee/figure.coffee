@@ -84,6 +84,13 @@ class Axes
     # notice the use of fat arrow!
     render: () =>
 
+
+        # enable alpha blending
+        # TODO: make optional
+        GL = @renderer.context
+        GL.enable(GL.BLEND)
+        GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+
         if @needsUpdate
 
             console.log('calling update')
@@ -93,7 +100,6 @@ class Axes
                 obj.update(@)
 
             @needsUpdate = false
-
 
         @renderer.render(@scene, @camera)
 
