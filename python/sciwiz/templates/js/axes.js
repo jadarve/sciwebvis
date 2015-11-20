@@ -4,7 +4,7 @@
 var axesProp = {
     width : 800,
     height : 800,
-    bgcolor : 0xF0F0F0
+    bgcolor : 0x707070
 };
 
 var axes = fig.addAxes(axesProp);
@@ -22,4 +22,5 @@ var axes = fig.addAxes(axesProp);
 
 // re-render
 axes.needsUpdate = true;
+axes.render();
 axes.render();

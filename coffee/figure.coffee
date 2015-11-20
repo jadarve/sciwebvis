@@ -69,6 +69,7 @@ class Axes
         @controls.enableDamping = true
         @controls.dampingFactor = 0.25
         @controls.enableZoom = true
+        @controls.autoRotate = true
 
 
         # the axes needs to be updated after creation
@@ -102,6 +103,7 @@ class Axes
             @needsUpdate = false
 
         @renderer.render(@scene, @camera)
+        # @controls.update()
 
 
 module.exports = 
