@@ -10,7 +10,7 @@ import numpy as np
 import numjis as nj
 
 
-__all__ = ['Figure', 'Axes', 'RenderObject', 'Scatter']
+__all__ = ['Figure', 'Axes', 'JSRenderable', 'Scatter']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))

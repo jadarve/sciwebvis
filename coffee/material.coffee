@@ -4,7 +4,7 @@ varying vec4 color;
 
 void main() {
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-    gl_PointSize = 10.0; // pixels
+    gl_PointSize = 5.0; // pixels
     color = vec4(0.0, 1.0, 0.0, 0.5);
 }
 """
@@ -13,8 +13,8 @@ pointMaterial_fragment = """
 varying vec4 color;
 void main() {
     float r = length(gl_PointCoord - vec2(0.5, 0.5)); // radius
-    float s = step(r, 0.5);
-    gl_FragColor = (1.0-s)*vec4(1.0, 1.0, 1.0, 0.0) + s*color;
+    gl_FragColor = color;
+    if(r > 0.5) { discard; }
 }
 """
 
