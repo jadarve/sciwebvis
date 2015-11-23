@@ -40,9 +40,9 @@ class Axes
         @container = $('#'+containerID)
 
         @properties = prop
-
-        # render objects
-        @objects = new Array()
+        
+        @objects = new Array()   # render objects
+        @materials = new Array() # material dictionary
 
         # renderer
         @renderer = new THREE.WebGLRenderer()
@@ -88,9 +88,9 @@ class Axes
 
         # enable alpha blending
         # TODO: make optional
-        GL = @renderer.context
-        GL.enable(GL.BLEND)
-        GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+        # GL = @renderer.context
+        # GL.enable(GL.BLEND)
+        # GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
 
         if @needsUpdate
 
@@ -103,7 +103,6 @@ class Axes
             @needsUpdate = false
 
         @renderer.render(@scene, @camera)
-        # @controls.update()
 
 
 module.exports = 

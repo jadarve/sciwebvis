@@ -9,6 +9,8 @@ from jinja2 import Environment, PackageLoader
 import numpy as np
 import numjis as nj
 
+# from .material import Material
+
 
 __all__ = ['Figure', 'Axes', 'JSRenderable', 'Scatter']
 
@@ -19,16 +21,11 @@ _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
 class Figure(object):
 
     def __init__(self):
-
-        # figure ID
-        self.__ID = str(uuid.uuid4())
-
-        # axes list
-        self.__axes = list()
-
+        
+        self.__ID = str(uuid.uuid4()) # figure ID
+        self.__axes = list()          # axes list
         self.__dataDict = dict()      # data source dictionary
         self.__materialDict = dict()  # material dictionary
-
 
     ###################################
     # PROPERTIES
@@ -104,11 +101,17 @@ class Figure(object):
 
     def addMaterial(self, material):
         """
-        Add a new material to figure.
+        Add a new material to axes.
         """
 
-        # TODO: add material to material dictionary
-        pass
+        if type(material) != Material:
+            raise TypeError('Expecting Material object')
+
+        # configure material to this figure
+        material.addToFigure(self)
+
+        # add material to dictionary
+        self.__materialDict[material.ID] = material
 
 
     def addAxes(self, **kwargs):
@@ -251,6 +254,12 @@ class Axes(JSRenderable):
         ##########################
         JScode = list()
 
+        # render materials
+        materialDictJson = dict()
+        for d in self.__materialDict.viewitems():
+            materialDictJson[d[0]] = nj.toJson(d[1])
+
+
         # render each render object
         JSrenderObj = list()
         for obj in self.__renderObjects:
@@ -259,7 +268,8 @@ class Axes(JSRenderable):
 
         # axes rendering
         axesTemp = _templateEnv.get_template('js/axes.js')
-        JScode.append(axesTemp.render(objects = JSrenderObj))
+        JScode.append(axesTemp.render(objects = JSrenderObj,
+            materials = materialDictJson))
 
         return ''.join(JScode)
 

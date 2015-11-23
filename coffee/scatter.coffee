@@ -19,7 +19,7 @@ class Scatter
     update: (axes) ->
 
         mesh = new THREE.Points(@properties.geometry,
-            @properties.material)
+            @properties.material.material)
 
         axes.scene.add(mesh)
 

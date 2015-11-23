@@ -9,6 +9,15 @@ var axesProp = {
 
 var axes = fig.addAxes(axesProp);
 
+// Render materials
+{% for mat in materials.viewitems() %}
+///////////////////////////////////////
+{
+{{mat}}
+};
+///////////////////////////////////////
+{% endfor %}
+
 
 // Render objects
 {% for obj in objects %}
