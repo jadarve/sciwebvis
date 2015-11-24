@@ -4,26 +4,25 @@ class Scatter
 
     constructor: (prop) ->
 
-        # @axes = axes
-        @properties = prop
+        if not prop?
+            throw new SCIWIZ.SciwizException('expecting properties object')
 
-        # numjis array
-        vertex = @properties.vertex
-        geometry = new THREE.BufferGeometry()
-        geometry.addAttribute( 'position', new THREE.BufferAttribute(vertex.data, 3));
+        if not prop.vertex?
+            throw new SCIWIZ.SciwizException('vertex property not found')
 
-        @properties['geometry'] = geometry
-
-        # material
-        @properties['material'] = if prop['material']? then prop['material'] else new SCIWIZ.PointMaterial()
-
+        # unroll properties
+        @vertex = prop['vertex']
+        @material = if prop['material']? then prop['material'] else new SCIWIZ.PointMaterial()
 
 
     update: (axes) ->
 
-        mesh = new THREE.Points(@properties.geometry,
-            @properties['material'].material)
+        # geometry
+        geometry = new THREE.BufferGeometry()
+        geometry.addAttribute('position', new THREE.BufferAttribute(@vertex.data, 3));
 
+        # create and add mesh to axes' scene
+        mesh = new THREE.Points(geometry, @material.get())
         axes.scene.add(mesh)
 
 
