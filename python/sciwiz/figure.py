@@ -18,7 +18,7 @@ __all__ = ['Figure', 'Axes', 'Scatter']
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
 
 
-class Figure(object):
+class Figure(JSRenderable):
 
     def __init__(self):
         
@@ -111,7 +111,6 @@ class Figure(object):
         # check if material already exists
         for mat in self.__materialDict.viewitems():
             if mat[1] is m:
-                print('material found')
                 return mat[1]
 
         # if code reaches this point, a new material needs to be added
@@ -134,13 +133,7 @@ class Figure(object):
         return ax
 
 
-    def show(self):
-
-        figPanelTemp = _templateEnv.get_template('html/figure.html')
-        figPanel = figPanelTemp.render(id=self.__ID)
-
-        HTML = display.HTML(data=figPanel)
-        display.display(HTML)
+    def render(self):
 
         ##########################
         # Javascript rendering
@@ -176,15 +169,25 @@ class Figure(object):
         for axes in self.__axes:
             JScode.append(axes.render())
 
-        JSsrc = ''.join(JScode)
+        return ''.join(JScode)
 
-        print(JSsrc)
+
+    def show(self):
+
+        figPanelTemp = _templateEnv.get_template('html/figure.html')
+        figPanel = figPanelTemp.render(id=self.__ID)
+
+        HTML = display.HTML(data=figPanel)
+        display.display(HTML)
+
+        # JavaScript code
+        JScode = self.render()
 
         libs = ['http://threejs.org/build/three.min.js',
                 'js/numjis_bundle.js',
                 'js/OrbitControls.js',
                 'js/sciwiz_bundle.js']
-        JS = display.Javascript(data = JSsrc, lib = libs)
+        JS = display.Javascript(data = JScode, lib = libs)
         display.display(JS)
 
 
