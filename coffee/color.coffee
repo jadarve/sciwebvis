@@ -9,7 +9,7 @@ Convert from NJ.NDArray to THREE.Vector4 color representation
 
 @return [THREE.Vector4] RBGA color
 ###
-color2vec4 = (c) ->
+nj2vec4 = (c) ->
     
     if !c instanceof NJ.NDArray
         throw new SCIWIZ.SciwizException('Expecting NJ.NDArray object')
@@ -33,6 +33,23 @@ Return a random RGB color with given alpha
 randomColor = (alpha=1.0) ->
     return NJ.array([Math.random(), Math.random(), Math.random(), alpha], dtype=NJ.float32)
 
+
+###
+Color class
+###
+class Color
+
+    constructor: (R=Math.random(), G=Math.random(), B=Math.random(), A=1.0) ->
+
+        [@R, @G, @B, @A] = [R, G, B, A]
+        # console.log('RGBA: ' + @R + ' ' + @G + ' ' + @B + ' ' + @A)
+
+    vec4: () ->
+        return new THREE.Vector4(@R, @G, @B, @A)
+
+
 module.exports =
-    color2vec4 : color2vec4
+    nj2vec4 : nj2vec4
     randomColor : randomColor
+
+    Color : Color

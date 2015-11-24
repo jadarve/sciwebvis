@@ -1,10 +1,17 @@
 
 import uuid
+import numpy as np
 
-from .figure import JSRenderable, Axes
+from jinja2 import Environment, PackageLoader
+
+from .JSRenderable import JSRenderable
+from .color import Color
 
 
-__all__ = ['Material']
+__all__ = ['Material', 'PointMaterial']
+
+# template Environment object
+_templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
 
 class Material(JSRenderable):
 
@@ -16,7 +23,7 @@ class Material(JSRenderable):
         pass
 
 
-    def addToAxes(self, fig):
+    def addToFigure(self, fig):
         pass
 
 
@@ -35,21 +42,26 @@ class PointMaterial(Material):
     Material used to render points.
     """
 
-    def __init__(self, **kwargs):
-        super(PointMaterial).__init__(self)
+    def __init__(self, fig=None, **kwargs):
+        super(PointMaterial, self).__init__()
 
         self.__properties = dict()
-        self.__properties['pointSize'] = 20
+        self.__properties['pointSize'] = kwargs.pop('pointSize', 5)
+        self.__properties['color'] = kwargs.pop('color', Color())
 
 
-    def addToAxes(self, ax):
+        if fig != None:
+            fig.addMaterial(self)
 
-        if type(ax) != Axes:
-            raise TypeError('Expecting Axes object')
-
-        # TODO
+    def addToFigure(self, fig):
+        # nothing to do for this material
+        pass
 
 
     def render(self):
 
-        pass
+        materialTemplate = _templateEnv.get_template('js/pointMaterial.js')
+        return materialTemplate.render(pointSize = self.__properties['pointSize'],
+            color = self.__properties['color'].render())
+
+        # return 'SCIWIZ.PointMaterial({pointSize : 5, color : new SCIWIZ.Color()})'

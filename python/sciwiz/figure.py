@@ -9,10 +9,10 @@ from jinja2 import Environment, PackageLoader
 import numpy as np
 import numjis as nj
 
-# from .material import Material
+from .JSRenderable import JSRenderable
+from . import material
 
-
-__all__ = ['Figure', 'Axes', 'JSRenderable', 'Scatter']
+__all__ = ['Figure', 'Axes', 'Scatter']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
@@ -77,7 +77,7 @@ class Figure(object):
         if type(data) != np.ndarray:
             raise TypeError('Expecting Numpy ndarray object')
 
-        # check if date is already in dataDict
+        # check if data is already in dataDict
         for d in self.__dataDict.viewitems():
 
             # compare pointers
@@ -99,19 +99,30 @@ class Figure(object):
         return dataUUID
 
 
-    def addMaterial(self, material):
+    def addMaterial(self, m):
         """
         Add a new material to axes.
         """
 
-        if type(material) != Material:
+        if not isinstance(m, material.Material):
             raise TypeError('Expecting Material object')
 
+
+        # check if material already exists
+        for mat in self.__materialDict.viewitems():
+            if mat[1] is m:
+                print('material found')
+                return mat[1]
+
+        # if code reaches this point, a new material needs to be added
+
         # configure material to this figure
-        material.addToFigure(self)
+        m.addToFigure(self)
 
         # add material to dictionary
-        self.__materialDict[material.ID] = material
+        self.__materialDict[m.ID] = m
+
+        return m
 
 
     def addAxes(self, **kwargs):
@@ -146,6 +157,17 @@ class Figure(object):
         dataJS = dataSourceTemplate.render(DATA=dataDictJson)
         JScode.append(dataJS)
 
+        # render materials
+        materialDictJS = dict()
+        for d in self.__materialDict.viewitems():
+            # TODO
+            materialDictJS[d[0]] = d[1].render()
+
+        materialTemplate = _templateEnv.get_template('js/materials.js')
+        materialJS = materialTemplate.render(materials = materialDictJS)
+        JScode.append(materialJS)
+
+
         # Figure creation
         jsTemp = _templateEnv.get_template('js/figure.js')
         JScode.append(jsTemp.render(id=self.__ID))
@@ -164,22 +186,6 @@ class Figure(object):
                 'js/sciwiz_bundle.js']
         JS = display.Javascript(data = JSsrc, lib = libs)
         display.display(JS)
-
-
-
-class JSRenderable(object):
-    """
-    Base class for render classes
-    """
-
-    def __init__(self):
-        pass
-
-    def render(self):
-        """
-        returns Javascript code for rendering the object.
-        """
-        pass
 
 
 class Axes(JSRenderable):
@@ -254,11 +260,6 @@ class Axes(JSRenderable):
         ##########################
         JScode = list()
 
-        # render materials
-        materialDictJson = dict()
-        for d in self.__materialDict.viewitems():
-            materialDictJson[d[0]] = nj.toJson(d[1])
-
 
         # render each render object
         JSrenderObj = list()
@@ -268,8 +269,7 @@ class Axes(JSRenderable):
 
         # axes rendering
         axesTemp = _templateEnv.get_template('js/axes.js')
-        JScode.append(axesTemp.render(objects = JSrenderObj,
-            materials = materialDictJson))
+        JScode.append(axesTemp.render(objects = JSrenderObj))
 
         return ''.join(JScode)
 
@@ -294,13 +294,19 @@ class Scatter(JSRenderable):
         self.__dataID = self.__axes.addData(vertex)
 
         # unroll kwargs
-        # TODO: add material management
+        self.__properties = dict()
+        self.__properties['material'] = kwargs.pop('material', material.PointMaterial())
+
+
+        # add material to axes
+        axes.addMaterial(self.__properties['material'])
 
 
     def render(self):
 
         renderTemplate = _templateEnv.get_template('js/scatter.js')
-        JSsrc = renderTemplate.render(vertex = self.__dataID)
+        JSsrc = renderTemplate.render(vertex = self.__dataID,
+            material=self.__properties['material'].ID)
 
         return JSsrc
 

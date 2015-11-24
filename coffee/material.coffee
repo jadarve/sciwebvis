@@ -67,10 +67,15 @@ class PointMaterial
 
     constructor: (prop) ->
 
+        #  test for undefined prop
+        prop = if prop? then prop else new Array()
+
         # unroll properties
         @properties = new Array()
+
         @properties['pointSize'] = if prop['pointSize'] then prop['pointSize'] else 5
-        @properties['color'] = if prop['color']? then SCIWIZ.color2vec4(prop['color']) else SCIWIZ.color2vec4(SCIWIZ.randomColor())
+        # @properties['color'] = if prop['color']? then SCIWIZ.color2vec4(prop['color']) else SCIWIZ.color2vec4(SCIWIZ.randomColor())
+        @properties['color'] = if prop['color']? then prop['color'] else new SCIWIZ.Color()
         @properties['transparent'] = if prop['transparent']? then prop['transparent'] else true
 
         @material = new THREE.ShaderMaterial({
@@ -79,7 +84,7 @@ class PointMaterial
             transparent : @properties['transparent']
             uniforms:
                 pointSize : {type : 'f', value : @properties['pointSize']}
-                color : {type : 'v4', value : @properties['color']}
+                color : {type : 'v4', value : @properties['color'].vec4()}
             })
 
 

@@ -1,5 +1,5 @@
 
-var dataDict = new Array()
+var dataDict = new Array();
 
 initData();
 
