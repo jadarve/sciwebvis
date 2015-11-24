@@ -37,3 +37,7 @@ class Surface
         # create and add mesh to axes' scene
         mesh = new THREE.Mesh(geometry, @material)
         axes.scene.add(mesh)
+
+
+module.exports =
+    Surface : Surface

@@ -21,5 +21,6 @@ appendModule(SCIWIZ, require('./material'))
 appendModule(SCIWIZ, require('./color'))
 appendModule(SCIWIZ, require('./mesh'))
 appendModule(SCIWIZ, require('./scatter'))
+appendModule(SCIWIZ, require('./surface'))
 
 module.exports = SCIWIZ

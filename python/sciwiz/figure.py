@@ -12,7 +12,7 @@ import numjis as nj
 from .JSRenderable import JSRenderable
 from . import material
 
-__all__ = ['Figure', 'Axes', 'Scatter']
+__all__ = ['Figure', 'Axes', 'Scatter', 'Surface']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
@@ -286,6 +286,14 @@ class Axes(JSRenderable):
         self.__renderObjects.append(Scatter(self, vertex, **kwargs))
 
 
+    def surface(self, vertex, **kwargs):
+        
+        if type(vertex) != np.ndarray:
+            raise TypeError('Expecting a Numpy NDArray object')
+
+        # adds a Surface render object
+        self.__renderObjects.append(Surface(self, vertex, **kwargs))
+
 
 class Scatter(JSRenderable):
 
@@ -308,11 +316,29 @@ class Scatter(JSRenderable):
     def render(self):
 
         renderTemplate = _templateEnv.get_template('js/scatter.js')
-        JSsrc = renderTemplate.render(vertex = self.__dataID,
+        JScode = renderTemplate.render(vertex = self.__dataID,
             material=self.__properties['material'].ID)
 
-        return JSsrc
+        return JScode
 
+
+class Surface(JSRenderable):
+
+    def __init__(self, axes, vertex, **kwargs):
+        
+        self.__axes = axes
+
+        # add vertex array to data sources
+        self.__dataID = self.__axes.addData(vertex)
+
+
+    def render(self):
+
+        renderTemplate = _templateEnv.get_template('js/surface.js')
+        JScode = renderTemplate.render(vertex = self.__dataID)
+
+        return JScode
+    
 
 # class Surface(JSRenderable):
 

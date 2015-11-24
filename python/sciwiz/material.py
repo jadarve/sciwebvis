@@ -64,4 +64,12 @@ class PointMaterial(Material):
         return materialTemplate.render(pointSize = self.__properties['pointSize'],
             color = self.__properties['color'].render())
 
-        # return 'SCIWIZ.PointMaterial({pointSize : 5, color : new SCIWIZ.Color()})'
+    
+
+class TexturedSurfaceMaterial(Material):
+
+    def addToFigure(self, fig):
+        pass
+
+    def render(self):
+        pass
