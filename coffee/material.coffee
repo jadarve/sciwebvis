@@ -86,7 +86,32 @@ class PointMaterial
             })
 
 
+class WireframeMaterial
+
+    constructor: (prop) ->
+
+        #  test for undefined prop
+        prop = if prop? then prop else new Array()
+
+        # unroll properties
+        @color = if prop['color']? then prop['color'] else new SCIWIZ.Color()
+        @transparent = if prop['transparent']? then prop['transparent'] else true
+        @lineWidth = if prop['lineWidth']? then prop['lineWidth'] else 1
+    
+
+    get: () ->
+
+        return new THREE.MeshBasicMaterial({
+                wireframe : true
+                wireframeLinewidth : @lineWidth
+                color : @color.intRGB()
+                transparent : @transparent
+                opacity : @color.A
+            })        
+
+
 module.exports =
 
     Material : Material
     PointMaterial : PointMaterial
+    WireframeMaterial : WireframeMaterial

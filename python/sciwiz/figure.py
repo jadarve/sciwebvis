@@ -331,11 +331,19 @@ class Surface(JSRenderable):
         # add vertex array to data sources
         self.__dataID = self.__axes.addData(vertex)
 
+        # unroll kwargs
+        self.__properties = dict()
+        self.__properties['material'] = kwargs.pop('material', material.WireframeMaterial())
+
+
+        # add material to axes
+        axes.addMaterial(self.__properties['material'])
 
     def render(self):
 
         renderTemplate = _templateEnv.get_template('js/surface.js')
-        JScode = renderTemplate.render(vertex = self.__dataID)
+        JScode = renderTemplate.render(vertex = self.__dataID,
+            material = self.__properties['material'].ID)
 
         return JScode
     

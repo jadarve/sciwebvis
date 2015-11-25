@@ -48,6 +48,10 @@ class Color
         return new THREE.Vector4(@R, @G, @B, @A)
 
 
+    intRGB: () ->
+        return (0xFF & (@R*255)) << 16 | (0xFF & (@G*255)) << 8 | (0xFF & (@B*255))
+
+
 module.exports =
     nj2vec4 : nj2vec4
     randomColor : randomColor

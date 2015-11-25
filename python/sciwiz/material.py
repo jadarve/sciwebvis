@@ -8,7 +8,7 @@ from .JSRenderable import JSRenderable
 from .color import Color
 
 
-__all__ = ['Material', 'PointMaterial']
+__all__ = ['Material', 'PointMaterial', 'WireframeMaterial']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
@@ -64,7 +64,34 @@ class PointMaterial(Material):
         return materialTemplate.render(pointSize = self.__properties['pointSize'],
             color = self.__properties['color'].render())
 
-    
+
+
+class WireframeMaterial(Material):
+
+    def __init__(self, fig=None, **kwargs):
+        super(WireframeMaterial, self).__init__()
+
+        self.__properties = dict()
+        self.__properties['color'] = kwargs.pop('color', Color())
+        self.__properties['lineWidth'] = kwargs.pop('lineWidth', 1)
+        self.__properties['transparent'] = str(kwargs.pop('transparent', True)).lower()
+
+
+        if fig != None:
+            fig.addMaterial(self)
+
+    def addToFigure(self, fig):
+        # nothing to do
+        pass
+
+    def render(self):
+        
+        materialTemplate = _templateEnv.get_template('js/wireframeMaterial.js')
+        return materialTemplate.render(lineWidth=self.__properties['lineWidth'],
+            color=self.__properties['color'].render(),
+            transparent=self.__properties['transparent'])
+
+
 
 class TexturedSurfaceMaterial(Material):
 

@@ -11,19 +11,9 @@ class Surface
             throw new SCIWIZ.SciwizException('vertex property not found')
 
         @vertex = prop.vertex
-        @faces = if prop['faces']? then prop[faces] else SCIWIZ.surfaceFaces(@vertex)
-        @uv = if prop['uv']? then prop[faces] else SCIWIZ.surfaceUV(@vertex)
-
-        # material properties
-        matprop = {
-            color : 0x00FF00
-            side : THREE.DoubleSide
-            wireframe : true
-            wireframeLinewidth : 2
-        }
-
-        # material
-        @material = new THREE.MeshBasicMaterial(matprop)
+        @faces = if prop['faces']? then prop['faces'] else SCIWIZ.surfaceFaces(@vertex)
+        @uv = if prop['uv']? then prop['uv'] else SCIWIZ.surfaceUV(@vertex)
+        @material = if prop['material'] then prop['material'] else new SCIWIZ.WireframeMaterial()
 
 
     update: (axes) ->
@@ -35,7 +25,7 @@ class Surface
         geometry.setIndex(new THREE.BufferAttribute(@faces.data, 1))
 
         # create and add mesh to axes' scene
-        mesh = new THREE.Mesh(geometry, @material)
+        mesh = new THREE.Mesh(geometry, @material.get())
         axes.scene.add(mesh)
 
 
