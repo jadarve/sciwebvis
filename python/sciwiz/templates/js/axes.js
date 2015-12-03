@@ -2,9 +2,10 @@
 
 // TODO: get from Python
 var axesProp = {
-    width : 800,
-    height : 800,
-    bgcolor : 0xF0F0F0
+    width : {{prop['size'][0]}},
+    height : {{prop['size'][1]}},
+    bgcolor : 0xF0F0F0,
+    color : new SCIWIZ.Color(0.9375, 0.9375, 0.9375)
 };
 
 var axes = fig.addAxes(axesProp);

@@ -42,7 +42,7 @@ class Color
     constructor: (R=Math.random(), G=Math.random(), B=Math.random(), A=1.0) ->
 
         [@R, @G, @B, @A] = [R, G, B, A]
-        # console.log('RGBA: ' + @R + ' ' + @G + ' ' + @B + ' ' + @A)
+        console.log('RGBA: ' + @R + ' ' + @G + ' ' + @B + ' ' + @A)
 
     vec4: () ->
         return new THREE.Vector4(@R, @G, @B, @A)

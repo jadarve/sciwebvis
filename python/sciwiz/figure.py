@@ -11,6 +11,7 @@ import numjis as nj
 
 from .JSRenderable import JSRenderable
 from . import material
+from .color import Color
 
 __all__ = ['Figure', 'Axes', 'Scatter', 'Surface']
 
@@ -198,6 +199,11 @@ class Axes(JSRenderable):
         self.__fig = fig
         self.__renderObjects = list()
 
+        # unroll kwargs
+        self.__properties = dict()
+        self.__properties['size'] = kwargs.pop('size', (800, 800))  # (width, height)
+        self.__properties['bgcolor'] = kwargs.pop('bgcolor', Color(0.9375))
+
 
     ###################################
     # PROPERTIES
@@ -272,7 +278,8 @@ class Axes(JSRenderable):
 
         # axes rendering
         axesTemp = _templateEnv.get_template('js/axes.js')
-        JScode.append(axesTemp.render(objects = JSrenderObj))
+        JScode.append(axesTemp.render(objects = JSrenderObj,
+            prop = self.__properties))
 
         return ''.join(JScode)
 
