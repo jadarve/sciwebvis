@@ -26,7 +26,7 @@ class Figure
         axContainer.attr('id', axesID)
         axContainer.append(axesID)
 
-        ax = new Axes(axesID, prop)
+        ax = new SCIWIZ.Axes(axesID, prop)
         
         @axes.push(ax)
         return ax
@@ -44,6 +44,7 @@ class Axes
         @objects = new Array()   # render objects
         @materials = new Array() # material dictionary
 
+        console.log('Axes constructor')
         # renderer
         @renderer = new THREE.WebGLRenderer()
         @renderer.setSize(@properties.width, @properties.height)
