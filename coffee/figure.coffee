@@ -49,7 +49,7 @@ class Axes
         @renderer = new THREE.WebGLRenderer()
         @renderer.setSize(@properties.width, @properties.height)
         # @renderer.setClearColor(@properties.bgcolor)
-        @renderer.setClearColor(@properties.color.intRBG())
+        @renderer.setClearColor(@properties.color.intRGB())
         @container.append(@renderer.domElement)
 
         # scene
