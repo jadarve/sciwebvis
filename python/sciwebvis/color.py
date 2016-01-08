@@ -7,7 +7,7 @@ from .JSRenderable import JSRenderable
 __all__ = ['Color']
 
 # template Environment object
-_templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
+_templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 
 
 class Color(JSRenderable):

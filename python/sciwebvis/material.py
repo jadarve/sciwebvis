@@ -11,7 +11,7 @@ from .color import Color
 __all__ = ['Material', 'PointMaterial', 'WireframeMaterial']
 
 # template Environment object
-_templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
+_templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 
 class Material(JSRenderable):
 

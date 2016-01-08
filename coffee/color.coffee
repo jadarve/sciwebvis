@@ -12,14 +12,14 @@ Convert from NJ.NDArray to THREE.Vector4 color representation
 nj2vec4 = (c) ->
     
     if !c instanceof NJ.NDArray
-        throw new SCIWIZ.SciwizException('Expecting NJ.NDArray object')
+        throw new SCIWIS.SciwisException('Expecting NJ.NDArray object')
 
     [R, G, B, A] = [1.0, 1.0, 1.0, 1.0]
     switch c.length
         when 1 then [R, G, B] = [c.data[0], c.data[0], c.data[0]]
         when 3 then [R, G, B] = [c.data[0], c.data[1], c.data[2]]
         when 4 then [R, G, B, A] = [c.data[0], c.data[1], c.data[2], c.data[3]]
-        else throw new SCIWIZ.SciwizException('Unexpected color length: got: ' + c.length)
+        else throw new SCIWIS.SciwisException('Unexpected color length: got: ' + c.length)
 
     return new THREE.Vector4(R, G, B, A)
 

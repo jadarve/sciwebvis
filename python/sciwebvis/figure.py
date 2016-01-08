@@ -16,7 +16,7 @@ from .color import Color
 __all__ = ['Figure', 'Axes', 'Scatter', 'Surface']
 
 # template Environment object
-_templateEnv = Environment(loader=PackageLoader('sciwiz', 'templates'))
+_templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 
 
 class Figure(JSRenderable):
@@ -187,7 +187,7 @@ class Figure(JSRenderable):
         libs = ['http://threejs.org/build/three.min.js',
                 'js/numjis_bundle.js',
                 'js/OrbitControls.js',
-                'js/sciwiz_bundle.js']
+                'js/sciwis_bundle.js']
         JS = display.Javascript(data = JScode, lib = libs)
         display.display(JS)
 

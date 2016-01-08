@@ -26,7 +26,7 @@ class Figure
         axContainer.attr('id', axesID)
         axContainer.append(axesID)
 
-        ax = new SCIWIZ.Axes(axesID, prop)
+        ax = new SCIWIS.Axes(axesID, prop)
         
         @axes.push(ax)
         return ax

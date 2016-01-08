@@ -256,6 +256,6 @@ bundle_callback = ->
 #
 # creates a bundles JS file wit the implementation
 bundle = () ->
-  options = ['lib/sciwiz.js', '-o', 'lib/sciwiz_bundle.js']
+  options = ['lib/sciwis.js', '-o', 'lib/sciwis_bundle.js']
   launch 'browserify',  options, bundle_callback
 

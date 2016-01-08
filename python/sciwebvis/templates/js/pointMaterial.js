@@ -1,0 +1,1 @@
+SCIWIS.PointMaterial({pointSize: {{pointSize}}, color: new {{color}}})

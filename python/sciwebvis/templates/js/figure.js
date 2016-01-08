@@ -5,4 +5,4 @@ var figProp = {
 
 console.log('Figure ID: ' + figProp.ID);
 
-var fig = new SCIWIZ.Figure(figProp);
+var fig = new SCIWIS.Figure(figProp);

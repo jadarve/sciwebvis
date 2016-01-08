@@ -5,14 +5,14 @@ class Scatter
     constructor: (prop) ->
 
         if not prop?
-            throw new SCIWIZ.SciwizException('expecting properties object')
+            throw new SCIWIS.SciwisException('expecting properties object')
 
         if not prop.vertex?
-            throw new SCIWIZ.SciwizException('vertex property not found')
+            throw new SCIWIS.SciwisException('vertex property not found')
 
         # unroll properties
         @vertex = prop['vertex']
-        @material = if prop['material']? then prop['material'] else new SCIWIZ.PointMaterial()
+        @material = if prop['material']? then prop['material'] else new SCIWIS.PointMaterial()
 
 
     update: (axes) ->

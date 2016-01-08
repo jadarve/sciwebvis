@@ -5,15 +5,15 @@ class Surface
     constructor: (prop) ->
 
         if not prop?
-            throw new SCIWIZ.SciwizException('expecting properties object')
+            throw new SCIWIS.SciwisException('expecting properties object')
 
         if not prop.vertex?
-            throw new SCIWIZ.SciwizException('vertex property not found')
+            throw new SCIWIS.SciwisException('vertex property not found')
 
         @vertex = prop.vertex
-        @faces = if prop['faces']? then prop['faces'] else SCIWIZ.surfaceFaces(@vertex)
-        @uv = if prop['uv']? then prop['uv'] else SCIWIZ.surfaceUV(@vertex)
-        @material = if prop['material'] then prop['material'] else new SCIWIZ.WireframeMaterial()
+        @faces = if prop['faces']? then prop['faces'] else SCIWIS.surfaceFaces(@vertex)
+        @uv = if prop['uv']? then prop['uv'] else SCIWIS.surfaceUV(@vertex)
+        @material = if prop['material'] then prop['material'] else new SCIWIS.WireframeMaterial()
 
 
     update: (axes) ->

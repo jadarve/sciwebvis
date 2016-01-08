@@ -3,6 +3,6 @@
 
     // TODO: faces and UVs
 
-    var surface = new SCIWIZ.Surface({vertex : vertex, material : material});  // surface object
+    var surface = new SCIWIS.Surface({vertex : vertex, material : material});  // surface object
     axes.addObject(surface);  // add to axes
 

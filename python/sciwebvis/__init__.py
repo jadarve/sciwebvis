@@ -1,8 +1,8 @@
 
-if '__RELOAD_SCIWIZ__' in globals():
-    __RELOAD_SCIWIZ__ = True
+if '__RELOAD_SCIWEBVIS__' in globals():
+    __RELOAD_SCIWEBVIS__ = True
 else:
-    __RELOAD_SCIWIZ__ = False
+    __RELOAD_SCIWEBVIS__ = False
 
 
 from . import figure as __figure
@@ -11,7 +11,7 @@ from . import color as __color
 from . import JSRenderable as __JSRenderable
 
 
-if __RELOAD_SCIWIZ__:
+if __RELOAD_SCIWEBVIS__:
 
     print('reloading sciwiz')
 

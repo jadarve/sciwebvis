@@ -7,6 +7,9 @@ local
 # generated Javascript lib folder
 lib
 
+# generated doc folder
+doc
+
 #############################
 # IPython
 #############################
@@ -16,4 +19,4 @@ notebooks
 #############################
 # Sublime Text
 #############################
-sciwiz.sublime-workspace
+sciwebvis.sublime-workspace

@@ -72,7 +72,7 @@ class PointMaterial
 
         # unroll properties
         @pointSize = if prop['pointSize'] then prop['pointSize'] else 5
-        @color = if prop['color']? then prop['color'] else new SCIWIZ.Color()
+        @color = if prop['color']? then prop['color'] else new SCIWIS.Color()
         @transparent = if prop['transparent']? then prop['transparent'] else true
 
     get: () ->
@@ -94,7 +94,7 @@ class WireframeMaterial
         prop = if prop? then prop else new Array()
 
         # unroll properties
-        @color = if prop['color']? then prop['color'] else new SCIWIZ.Color()
+        @color = if prop['color']? then prop['color'] else new SCIWIS.Color()
         @transparent = if prop['transparent']? then prop['transparent'] else true
         @lineWidth = if prop['lineWidth']? then prop['lineWidth'] else 1
     

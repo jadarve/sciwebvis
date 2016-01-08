@@ -1,8 +1,8 @@
 
-class SciwizException
+class SciwisException
 
     constructor: (message) ->
         @message = message
 
 module.exports =
-    SciwizException : SciwizException
+    SciwisException : SciwisException
