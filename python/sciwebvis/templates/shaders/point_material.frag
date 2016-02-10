@@ -1,8 +1,9 @@
+
 varying vec4 vertexColor;
 
 void main() {
 
-    // point radius
+    /* point radius */
     float r = length(gl_PointCoord - vec2(0.5, 0.5));
     gl_FragColor = vertexColor;
 

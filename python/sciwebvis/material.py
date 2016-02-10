@@ -190,3 +190,34 @@ class TextureMaterial(Material):
         
         materialTemplate = _templateEnv.get_template('js/textureMaterial.js')
         return materialTemplate.render(texture=self.__properties['texture'])
+
+
+
+class ShaderMaterial(Material):
+
+    def __init__(self, fig=None, **kwargs):
+        """Creates a new shader material.
+
+        Parameters
+        ----------
+        fig : Figure, optional.
+            Figure object to which this material is attached. Defaults to None.
+
+        Kwargs
+        ------
+        vertex : string
+            Vertex shader code.
+
+        fragment : string
+            Fragment shader code.
+        """
+
+        super(ShaderMaterial, self).__init__()
+
+
+    def render(self):
+        pass
+
+
+    def addToFigure(self, fig):
+        pass
