@@ -15,7 +15,8 @@ from .JSRenderable import JSRenderable
 from .color import Color
 
 
-__all__ = ['Material', 'PointMaterial', 'WireframeMaterial']
+__all__ = ['Material', 'PointMaterial',
+    'WireframeMaterial', 'TextureMaterial']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
@@ -50,6 +51,22 @@ class PointMaterial(Material):
     """
 
     def __init__(self, fig=None, **kwargs):
+        """Creates a new point material.
+
+        Parameters
+        ----------
+        fig : Figure, optional.
+            Figure object to which this material is attached. Defaults to None.
+
+        Kwargs
+        ------
+        pointSize : int, optional.
+            Point size
+
+        color : Color, optional.
+            Point color.
+        """
+
         super(PointMaterial, self).__init__()
 
         self.__properties = dict()
@@ -76,6 +93,22 @@ class PointMaterial(Material):
 class WireframeMaterial(Material):
 
     def __init__(self, fig=None, **kwargs):
+        """Creates a new wireframe material
+
+        Parameters
+        ----------
+        fig : Figure, optional.
+            Figure object to which this material is attached. Defaults to None.
+
+        Kwargs
+        ------
+        color : Color, optional.
+
+        lineWidth : int, optional.
+
+        transparent : bool, optional.
+        """
+
         super(WireframeMaterial, self).__init__()
 
         self.__properties = dict()
@@ -87,9 +120,11 @@ class WireframeMaterial(Material):
         if fig != None:
             fig.addMaterial(self)
 
+
     def addToFigure(self, fig):
         # nothing to do
         pass
+
 
     def render(self):
         
@@ -100,10 +135,58 @@ class WireframeMaterial(Material):
 
 
 
-class TexturedSurfaceMaterial(Material):
+class TextureMaterial(Material):
+
+    def __init__(self, fig=None, **kwargs):
+        """Creates a new texture material.
+
+        Parameters
+        ----------
+        fig : Figure, optional.
+            Figure object to which this material is attached. Defaults to None.
+
+        Kwargs
+        ------
+        texture : ndarray.
+            Image texture to use by the material
+
+        Raises
+        ------
+        KeyError: if texture kwarg is not present.
+        """
+
+        super(TextureMaterial, self).__init__()
+
+
+        self.__properties = dict()
+
+        if not 'texture' in kwargs.keys():
+            raise KeyError('texture argument not set')
+
+        try:
+            tex = kwargs.pop('texture')
+
+            if type(tex) != np.ndarray:
+                raise TypeError('texture parameter should be numpy ndarray')
+
+            self.__properties['texture_data'] = tex
+
+        except KeyError as ke:
+            raise KeyError('texture argument not set')
+
+
+        # add material to figure
+        if fig != None:
+            self.addToFigure(fig)
+
 
     def addToFigure(self, fig):
-        pass
+        
+        # add texture data to figure
+        self.__properties['texture'] = fig.addData(self.__properties['texture_data'])
+
 
     def render(self):
-        pass
+        
+        materialTemplate = _templateEnv.get_template('js/textureMaterial.js')
+        return materialTemplate.render(texture=self.__properties['texture'])

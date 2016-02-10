@@ -28,6 +28,7 @@ void main() {
 """
 
 pointMaterial_fragment = """
+
 varying vec4 vertexColor;
 void main() {
     float r = length(gl_PointCoord - vec2(0.5, 0.5)); // radius
@@ -36,13 +37,37 @@ void main() {
 }
 """
 
-PointMaterial_ = new THREE.ShaderMaterial({
-    vertexShader : pointMaterial_vertex
-    fragmentShader : pointMaterial_fragment
-    # transparent : true
-    defines :
-        version : 110
-  })
+# PointMaterial_ = new THREE.ShaderMaterial({
+#     vertexShader : pointMaterial_vertex
+#     fragmentShader : pointMaterial_fragment
+#     # transparent : true
+#     defines :
+#         version : 110
+#   })
+
+TextureMaterial_vertex = """
+
+varying vec2 vertexUV;
+
+void main() {
+    vertexUV = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+}
+"""
+
+TextureMaterial_fragment = """
+uniform sampler2D textureSampler;
+
+varying vec2 vertexUV;
+
+void main() {
+    float lum = texture2D(textureSampler, vertexUV).x;
+    //gl_FragColor = vec4(lum.x, lum.x, lum.x, 1.0);
+
+    //gl_FragColor = texture2D(textureSampler, vertexUV);
+    gl_FragColor = lum*vec4(1.0, 0.0, 0.0, 0.0);
+}
+"""
 
 # material properties
 # matprop =
@@ -90,7 +115,7 @@ class WireframeMaterial
 
     constructor: (prop) ->
 
-        #  test for undefined prop
+        # test for undefined prop
         prop = if prop? then prop else new Array()
 
         # unroll properties
@@ -110,8 +135,51 @@ class WireframeMaterial
             })        
 
 
+class TextureMaterial
+
+    constructor: (prop) ->
+
+        # test for undefined prop
+        prop = if prop? then prop else new Array()
+
+        # unroll properties
+        if prop['texture']
+            # numjis array
+            @texture = prop['texture']
+        else
+            throw new SCIWIS.SciwisException('texture property not set')
+
+    get: () ->
+
+        console.log('TextureMaterial.get(): shape: ' + @texture.shape)
+        console.log('texture dtype: ' + @texture.dtype.name)
+
+
+        tex = new THREE.DataTexture(@texture.data, @texture.shape[1],
+            @texture.shape[0],
+            THREE.LuminanceFormat,
+            THREE.UnsignedByteType,
+            THREE.UVMapping)
+
+        tex.unpackAlignment = 1
+        tex.needsUpdate = true
+
+        # # tex = new THREE.TextureLoader().load('img.jpg')
+        # console.log(tex.format)
+        # console.log(tex.unpackAlignment)
+
+        return new THREE.ShaderMaterial({
+            vertexShader : TextureMaterial_vertex
+            fragmentShader : TextureMaterial_fragment
+            transparent : false
+            uniforms:
+                textureSampler : {type : 't', value : tex}
+            })
+
+
 module.exports =
 
     Material : Material
     PointMaterial : PointMaterial
     WireframeMaterial : WireframeMaterial
+    TextureMaterial : TextureMaterial

@@ -24,6 +24,8 @@ class Surface
         geometry.addAttribute('uv', new THREE.BufferAttribute(@uv.data, 2))
         geometry.setIndex(new THREE.BufferAttribute(@faces.data, 1))
 
+        # NJ.print(@uv)
+
         # create and add mesh to axes' scene
         mesh = new THREE.Mesh(geometry, @material.get())
         axes.scene.add(mesh)

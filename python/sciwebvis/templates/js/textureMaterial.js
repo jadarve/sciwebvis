@@ -1,0 +1,1 @@
+SCIWIS.TextureMaterial({texture: dataDict['{{texture}}']})
