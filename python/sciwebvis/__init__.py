@@ -1,3 +1,10 @@
+"""
+    sciwebvis
+    ---------
+
+    :copyright: 2015, Juan David Adarve. See AUTHORS for more details
+    :license: 3-clause BSD, see LICENSE for more details
+"""
 
 if '__RELOAD_SCIWEBVIS__' in globals():
     __RELOAD_SCIWEBVIS__ = True

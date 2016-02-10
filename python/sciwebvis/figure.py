@@ -1,4 +1,10 @@
+"""
+    sciwebvis.figure
+    ----------------
 
+    :copyright: 2015, Juan David Adarve. See AUTHORS for more details
+    :license: 3-clause BSD, see LICENSE for more details
+"""
 
 import uuid
 
