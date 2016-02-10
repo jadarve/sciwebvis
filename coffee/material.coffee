@@ -154,19 +154,17 @@ class TextureMaterial
         console.log('TextureMaterial.get(): shape: ' + @texture.shape)
         console.log('texture dtype: ' + @texture.dtype.name)
 
+        # THIS WORKS!
+        # tex = new THREE.DataTexture(@texture.data, @texture.shape[1],
+        #     @texture.shape[0],
+        #     THREE.LuminanceFormat,
+        #     THREE.UnsignedByteType,
+        #     THREE.UVMapping)
+        # tex.unpackAlignment = 1
+        # tex.needsUpdate = true
 
-        tex = new THREE.DataTexture(@texture.data, @texture.shape[1],
-            @texture.shape[0],
-            THREE.LuminanceFormat,
-            THREE.UnsignedByteType,
-            THREE.UVMapping)
-
-        tex.unpackAlignment = 1
-        tex.needsUpdate = true
-
-        # # tex = new THREE.TextureLoader().load('img.jpg')
-        # console.log(tex.format)
-        # console.log(tex.unpackAlignment)
+        # creates texture object from numjis array
+        tex = SCIWIS.textureFromNumjis(@texture)
 
         return new THREE.ShaderMaterial({
             vertexShader : TextureMaterial_vertex

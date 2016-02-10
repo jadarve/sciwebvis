@@ -22,5 +22,6 @@ appendModule(SCIWIS, require('./color'))
 appendModule(SCIWIS, require('./mesh'))
 appendModule(SCIWIS, require('./scatter'))
 appendModule(SCIWIS, require('./surface'))
+appendModule(SCIWIS, require('./texture'))
 
 module.exports = SCIWIS
