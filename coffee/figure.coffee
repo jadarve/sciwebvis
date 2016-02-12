@@ -13,7 +13,7 @@ class Figure
 
         # figure container element, a <div>
         @container = $('#'+@properties.ID)
-        @container.append('<h2>SciWiz Figure</h2')
+        @container.append('<h2>SciWiz Figure</h2>')
 
 
     addAxes: (prop) ->
