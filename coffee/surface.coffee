@@ -18,6 +18,8 @@ class Surface
 
     update: (axes) ->
 
+        # TODO: replace by SCIWIS.Geometry
+
         # geometry
         geometry = new THREE.BufferGeometry()
         geometry.addAttribute('position', new THREE.BufferAttribute(@vertex.data, 3));
