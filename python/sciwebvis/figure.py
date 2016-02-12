@@ -190,7 +190,11 @@ class Figure(JSRenderable):
         # JavaScript code
         JScode = self.render()
 
-        libs = ['https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js',
+        # NOTE: r69 in Google CDN does not work creating Three.Points objects.
+        #   No idea of why.
+
+        libs = [#'https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js',
+                'http://threejs.org/build/three.min.js',
                 'http://threejs.org/examples/js/controls/OrbitControls.js',
                 './js/numjis_bundle.js',
                 './js/sciwis_bundle.js']
