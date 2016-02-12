@@ -142,47 +142,49 @@ class Figure(JSRenderable):
 
     def render(self):
 
-        ##########################
-        # Javascript rendering
-        ##########################
-        JScode = list()
-
-        # data sources
+        #####################
+        # DATA
+        #####################
         # creates a dictionary with JSON code for each data source
-        dataDictJson = dict()
+        dataJS = dict()
         for d in self.__dataDict.viewitems():
-            dataDictJson[d[0]] = nj.toJson(d[1])
+            dataJS[d[0]] = nj.toJson(d[1])
 
-        dataSourceTemplate = _templateEnv.get_template('js/datasource.js')
-        dataJS = dataSourceTemplate.render(DATA=dataDictJson)
-        JScode.append(dataJS)
+        #####################
+        # GEOMETRY
+        #####################
 
-        # render materials
-        materialDictJS = dict()
+        #####################
+        # MATERIALS
+        #####################
+        materialsJS = dict()
         for d in self.__materialDict.viewitems():
             # TODO
-            materialDictJS[d[0]] = d[1].render()
-
-        materialTemplate = _templateEnv.get_template('js/materials.js')
-        materialJS = materialTemplate.render(materials = materialDictJS)
-        JScode.append(materialJS)
+            materialsJS[d[0]] = d[1].render()
 
 
-        # Figure creation
-        jsTemp = _templateEnv.get_template('js/figure.js')
-        JScode.append(jsTemp.render(id=self.__ID))
-
-        # Axes
+        #####################
+        # AXES
+        #####################
+        axesJS = list()
         for axes in self.__axes:
-            JScode.append(axes.render())
+            axesJS.append(axes.render())
 
-        return ''.join(JScode)
+
+        figTemp = _templateEnv.get_template('js/figure.js')
+
+        jsCode = figTemp.render(DATA=dataJS,
+            MATERIALS=materialsJS,
+            AXES=axesJS)
+
+        return jsCode
 
 
     def show(self):
 
         figPanelTemp = _templateEnv.get_template('html/figure.html')
-        figPanel = figPanelTemp.render(id=self.__ID)
+        # figPanel = figPanelTemp.render(id=self.__ID)
+        figPanel = figPanelTemp.render(id='137cda5d-6a5b-498d-beba-ec2a4ba6e930')
 
         HTML = display.HTML(data=figPanel)
         display.display(HTML)

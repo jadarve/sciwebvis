@@ -1,8 +1,43 @@
+// data, geometries and materials
+var dataDict = new Array();
+var geometryDict = new Array();
+var materialDict = new Array();
 
-var figProp = {
-    ID : '{{id}}'
-};
-
-console.log('Figure ID: ' + figProp.ID);
-
+//#####################################
+// FIGURE
+//#####################################
+var figProp = {ID: '137cda5d-6a5b-498d-beba-ec2a4ba6e930'};
 var fig = new SCIWIS.Figure(figProp);
+
+
+//#####################################
+// DATA
+//#####################################
+
+try {
+{% for item in DATA.viewitems() %}
+    dataDict['{{item[0]}}'] = NJ.fromJson('{{item[1]}}');{% endfor %}
+} catch(e) {
+    console.log('error parsing NUMJIS JSON: ' + e.message);
+}
+
+//#####################################
+// GEOMETRY
+//#####################################
+
+// TODO
+
+//#####################################
+// MATERIALS
+//#####################################
+{% for mat in MATERIALS.viewitems() %}
+materialDict['{{mat[0]}}'] = new {{mat[1]}};{% endfor %}
+
+//#####################################
+// AXES
+//#####################################
+{% for ax in AXES %}
+{{ax}} {% endfor%}
+
+
+console.log('figure creation completed');

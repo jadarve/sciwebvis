@@ -8,17 +8,12 @@ var axesProp = {
     color : new SCIWIS.Color(0.9375, 0.9375, 0.9375)
 };
 
+// TODO: name axes in consecutive order to support multiple axes per figure.
 var axes = fig.addAxes(axesProp);
-
 
 // Render objects
 {% for obj in objects %}
-///////////////////////////////////////
-{
-{{obj}}
-};
-///////////////////////////////////////
-{% endfor %}
+{{obj}}{% endfor %}
 
 
 // re-render
