@@ -6,8 +6,6 @@
     :license: 3-clause BSD, see LICENSE for more details
 """
 
-import uuid
-
 import IPython.display as display
 
 from jinja2 import Environment, PackageLoader
@@ -18,6 +16,7 @@ import numjis as nj
 from .JSRenderable import JSRenderable
 from . import material
 from .color import Color
+from .util import generateID
 
 __all__ = ['Figure', 'Axes', 'Scatter', 'Surface']
 
@@ -29,7 +28,7 @@ class Figure(JSRenderable):
 
     def __init__(self):
         
-        self.__ID = str(uuid.uuid4()) # figure ID
+        self.__ID = generateID() # figure ID
         self.__axes = list()          # axes list
         self.__dataDict = dict()      # data source dictionary
         self.__materialDict = dict()  # material dictionary
@@ -94,11 +93,13 @@ class Figure(JSRenderable):
         # if code reached this point, new data source needs to be created
 
         # create a new UUID
-        dataUUID = str(uuid.uuid4())
+        # dataUUID = str(uuid.uuid4())
 
-        # prevents duplicate keys, although unlikely
-        while self.__dataDict.has_key(dataUUID):
-            dataUUID = str(uuid.uuid4())
+        # # prevents duplicate keys, although unlikely
+        # while self.__dataDict.has_key(dataUUID):
+        #     dataUUID = str(uuid.uuid4())
+
+        dataUUID = generateID(self.__dataDict.keys())
 
         # insert new data source
         self.__dataDict[dataUUID] = data
@@ -173,7 +174,9 @@ class Figure(JSRenderable):
 
         figTemp = _templateEnv.get_template('js/figure.js')
 
-        jsCode = figTemp.render(DATA=dataJS,
+        jsCode = figTemp.render(
+            ID=self.ID,
+            DATA=dataJS,
             MATERIALS=materialsJS,
             AXES=axesJS)
 
@@ -183,8 +186,7 @@ class Figure(JSRenderable):
     def show(self):
 
         figPanelTemp = _templateEnv.get_template('html/figure.html')
-        # figPanel = figPanelTemp.render(id=self.__ID)
-        figPanel = figPanelTemp.render(id='137cda5d-6a5b-498d-beba-ec2a4ba6e930')
+        figPanel = figPanelTemp.render(id=self.__ID)
 
         HTML = display.HTML(data=figPanel)
         display.display(HTML)

@@ -6,14 +6,13 @@
     :license: 3-clause BSD, see LICENSE for more details
 """
 
-import uuid
 import numpy as np
 
 from jinja2 import Environment, PackageLoader
 
 from .JSRenderable import JSRenderable
 from .color import Color
-
+from .util import generateID
 
 __all__ = ['Material', 'PointMaterial',
     'WireframeMaterial', 'TextureMaterial', 'ShaderMaterial']
@@ -24,7 +23,7 @@ _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 class Material(JSRenderable):
 
     def __init__(self):
-        self.__ID = uuid.uuid4()
+        self.__ID = generateID()
 
 
     def render(self):

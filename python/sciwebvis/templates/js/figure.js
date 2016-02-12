@@ -6,7 +6,7 @@ var materialDict = new Array();
 //#####################################
 // FIGURE
 //#####################################
-var figProp = {ID: '137cda5d-6a5b-498d-beba-ec2a4ba6e930'};
+var figProp = {ID: '{{ID}}'};
 var fig = new SCIWIS.Figure(figProp);
 
 
