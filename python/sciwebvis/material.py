@@ -34,13 +34,13 @@ class Material(JSRenderable):
         pass
 
 
-    @property
-    def ID(self):
-        return self.__ID
+    # @property
+    # def ID(self):
+    #     return self.__ID
     
-    @ID.setter
-    def ID(self, value):
-        self.__ID = value
+    # @ID.setter
+    # def ID(self, value):
+    #     self.__ID = value
 
 
 

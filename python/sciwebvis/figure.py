@@ -27,10 +27,13 @@ _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 class Figure(JSRenderable):
 
     def __init__(self):
+        """Creates a new figure.
+        """
         
         self.__ID = generateID() # figure ID
         self.__axes = list()          # axes list
         self.__dataDict = dict()      # data source dictionary
+        self.__geometryDict = dict()  # geometry dictionary
         self.__materialDict = dict()  # material dictionary
 
     ###################################
@@ -77,7 +80,13 @@ class Figure(JSRenderable):
 
         Returns
         -------
-        dataUUID : UUID string
+        dataID : str
+            Unique string identifier of data in this figure.
+
+        Raises
+        ------
+        TypeError : if data is not an instance of np.ndarray.
+
         """
 
         if type(data) != np.ndarray:
@@ -90,26 +99,68 @@ class Figure(JSRenderable):
             if d[1] is data:
                 return d[0]
 
-        # if code reached this point, new data source needs to be created
+        # if code reaches this point, a new data source needs to be created
 
-        # create a new UUID
-        # dataUUID = str(uuid.uuid4())
-
-        # # prevents duplicate keys, although unlikely
-        # while self.__dataDict.has_key(dataUUID):
-        #     dataUUID = str(uuid.uuid4())
-
-        dataUUID = generateID(self.__dataDict.keys())
+        dataID = generateID(self.__dataDict.keys())
 
         # insert new data source
-        self.__dataDict[dataUUID] = data
+        self.__dataDict[dataID] = data
 
-        return dataUUID
+        return dataID
+
+
+    def addGeometry(self, geom):
+        """Adds a new Geometry object to the figure.
+
+        Parameters
+        ----------
+        geom : Geometry.
+            Geometry object.
+
+        Returns
+        -------
+        geom : Geometry.
+            Same geometry parameter.
+
+        Raises
+        ------
+        TypeError : if type(geom) != Geometry
+        """
+
+        if type(geom) != Geometry:
+            raise TypeError('geom parameter should be of type Geometry')
+
+        # check if geom already exists
+        for g in self.__geometryDict.viewitems():
+            if g[1] is geom:
+                return g[1]
+
+
+        # configure geometry to this figure
+        geom.addToFigure(self)
+
+        # generate a new ID
+        geomID = generateID(self.__geometryDict.keys())
+        self.__geometryDict[geomID] = geom
+        return geom
 
 
     def addMaterial(self, m):
-        """
-        Add a new material to axes.
+        """Add a new material to axes.
+
+        Parameters
+        ----------
+        m : Material.
+            Material instance
+
+        Returns
+        -------
+        m : Material.
+            Same material parameter.
+
+        Raises
+        ------
+        TypeError : if m is not a Material object.
         """
 
         if not isinstance(m, material.Material):
@@ -123,18 +174,22 @@ class Figure(JSRenderable):
 
         # if code reaches this point, a new material needs to be added
 
+        matID = generateID(self.__materialDict.keys())
         # configure material to this figure
-        m.addToFigure(self)
+        # m.addToFigure(self)
 
         # add material to dictionary
-        self.__materialDict[m.ID] = m
+        self.__materialDict[matID] = m
 
         return m
 
 
     def addAxes(self, **kwargs):
-        """
-        Add a new axes to the figure.
+        """Add a new axes to the figure.
+
+        Kwargs
+        ------
+        See Axes.__init__() for a list of admisible kwargs.
         """
         ax = Axes(self, **kwargs)
         self.__axes.append(ax)
@@ -143,26 +198,39 @@ class Figure(JSRenderable):
 
     def render(self):
 
-        #####################
-        # DATA
-        #####################
-        # creates a dictionary with JSON code for each data source
-        dataJS = dict()
-        for d in self.__dataDict.viewitems():
-            dataJS[d[0]] = nj.toJson(d[1])
+        
 
         #####################
         # GEOMETRY
         #####################
+        geomJS = dict()
+        for g in self.__geometryDict.viewitems():
+
+            geom = g[1]
+
+            # add geom to this figure and then render JS code
+            geom.addToFigure(self)
+            geomJS[g[0]] = geom.render()
 
         #####################
         # MATERIALS
         #####################
         materialsJS = dict()
-        for d in self.__materialDict.viewitems():
-            # TODO
-            materialsJS[d[0]] = d[1].render()
+        for m in self.__materialDict.viewitems():
 
+            mat = m[1]
+
+            # add material to this figure and then render JS code
+            mat.addToFigure(self)
+            materialsJS[m[0]] = mat.render()
+
+
+        #####################
+        # DATA
+        #####################
+        dataJS = dict()
+        for d in self.__dataDict.viewitems():
+            dataJS[d[0]] = nj.toJson(d[1])
 
         #####################
         # AXES
@@ -177,6 +245,7 @@ class Figure(JSRenderable):
         jsCode = figTemp.render(
             ID=self.ID,
             DATA=dataJS,
+            GEOMETRY=geomJS,
             MATERIALS=materialsJS,
             AXES=axesJS)
 
@@ -209,6 +278,21 @@ class Figure(JSRenderable):
 class Axes(JSRenderable):
 
     def __init__(self, fig, **kwargs):
+        """Creates a new Axes instance.
+
+        Parameters
+        ----------
+        fig : Figure.
+            Figure to which the axes is attaced.
+
+        Kwargs
+        ------
+        size : int tuple, optional.
+            Figure size (width, height) in pixels. Defaults to (800, 800).
+
+        bgcolor : Color, optional.
+            Background color. Defaults to light gray Color(0.9375).
+        """
         
         self.__fig = fig
         self.__renderObjects = list()

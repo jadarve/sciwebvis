@@ -25,7 +25,8 @@ try {
 // GEOMETRY
 //#####################################
 
-// TODO
+{% for g in GEOMETRY.viewitems() %}
+    geometryDict['{{g[0]}}'] = {{g1}};{% endfor %}
 
 //#####################################
 // MATERIALS
