@@ -16,7 +16,7 @@ from .color import Color
 
 
 __all__ = ['Material', 'PointMaterial',
-    'WireframeMaterial', 'TextureMaterial']
+    'WireframeMaterial', 'TextureMaterial', 'ShaderMaterial']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))

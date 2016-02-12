@@ -151,8 +151,8 @@ class TextureMaterial
 
     get: () ->
 
-        console.log('TextureMaterial.get(): shape: ' + @texture.shape)
-        console.log('texture dtype: ' + @texture.dtype.name)
+        # console.log('TextureMaterial.get(): shape: ' + @texture.shape)
+        # console.log('texture dtype: ' + @texture.dtype.name)
 
         # THIS WORKS!
         # tex = new THREE.DataTexture(@texture.data, @texture.shape[1],
