@@ -12,6 +12,7 @@ else:
     __RELOAD_SCIWEBVIS__ = False
 
 
+from . import geometry as __geometry
 from . import figure as __figure
 from . import material as __material
 from . import color as __color
@@ -22,18 +23,22 @@ if __RELOAD_SCIWEBVIS__:
 
     print('reloading sciwiz')
 
+    __geometry = reload(__geometry)
     __figure = reload(__figure)
     __material = reload(__material)
     __color = reload(__color)
     __JSRenderable = reload(__JSRenderable)
 
 
+from .geometry import *
 from .figure import *
 from .material import *
 from .color import *
 from .JSRenderable import *
 
+
 __all__ = []
+__all__.extend(__geometry.__all__)
 __all__.extend(__figure.__all__)
 __all__.extend(__material.__all__)
 __all__.extend(__color.__all__)
