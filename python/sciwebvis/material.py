@@ -12,7 +12,7 @@ from jinja2 import Environment, PackageLoader
 
 from .JSRenderable import JSRenderable
 from .color import Color
-from .util import generateID
+# from .util import generateID
 
 __all__ = ['Material', 'PointMaterial',
     'WireframeMaterial', 'TextureMaterial', 'ShaderMaterial']
@@ -23,7 +23,7 @@ _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 class Material(JSRenderable):
 
     def __init__(self):
-        self.__ID = generateID()
+        self.__ID = None
 
 
     def render(self):
@@ -34,13 +34,13 @@ class Material(JSRenderable):
         pass
 
 
-    # @property
-    # def ID(self):
-    #     return self.__ID
+    @property
+    def ID(self):
+        return self.__ID
     
-    # @ID.setter
-    # def ID(self, value):
-    #     self.__ID = value
+    @ID.setter
+    def ID(self, value):
+        self.__ID = value
 
 
 

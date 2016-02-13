@@ -18,6 +18,7 @@ appendModule = (root, module) ->
 appendModule(SCIWIS, require('./error'))
 appendModule(SCIWIS, require('./figure'))
 appendModule(SCIWIS, require('./material'))
+appendModule(SCIWIS, require('./geometry'))
 appendModule(SCIWIS, require('./color'))
 appendModule(SCIWIS, require('./mesh'))
 appendModule(SCIWIS, require('./scatter'))

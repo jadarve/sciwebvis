@@ -8,10 +8,15 @@
 
 import numpy as np
 
+from jinja2 import Environment, PackageLoader
 
 from .JSRenderable import JSRenderable
 
 __all__ = ['Geometry']
+
+
+# template Environment object
+_templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
 
 
 """
@@ -20,6 +25,8 @@ Base geometry class
 class Geometry(JSRenderable):
 
     def __init__(self):
+
+        self.__ID = None
         
         # attributes dictionary
         self.__attributes = dict()
@@ -29,6 +36,15 @@ class Geometry(JSRenderable):
         # addToFigure() method and then used
         # by render()
         self.__attributesFigDict = dict()
+
+
+    @property
+    def ID(self):
+        return self.__ID
+    
+    @ID.setter
+    def ID(self, value):
+        self.__ID = value
 
 
     ###################################
@@ -72,12 +88,12 @@ class Geometry(JSRenderable):
         TypeError : if type(fig) != Figure
         """
 
-        if type(fig) != Figure:
-            raise TypeError('fig parameter should be of type Figure')
+        # if type(fig) != Figure:
+        #     raise TypeError('fig parameter should be of type Figure')
 
         
         for name, arr in self.__attributes.viewitems():
-            self.__attributesFigDict[name] fig.addData(arr)
+            self.__attributesFigDict[name] = fig.addData(arr)
 
 
     def render(self):
@@ -94,7 +110,8 @@ class Geometry(JSRenderable):
         geometryDict['oiuasd7912'] = geom;
         """
 
-        return 'null'
+        geometryTemplate = _templateEnv.get_template('js/geometry.js')
+        return geometryTemplate.render(ATTRIBUTES=self.__attributesFigDict)
 
 
 

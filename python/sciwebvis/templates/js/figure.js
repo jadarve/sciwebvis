@@ -13,9 +13,8 @@ var fig = new SCIWIS.Figure(figProp);
 //#####################################
 // DATA
 //#####################################
-
 try {
-{% for item in DATA.viewitems() %}
+    {% for item in DATA.viewitems() %}
     dataDict['{{item[0]}}'] = NJ.fromJson('{{item[1]}}');{% endfor %}
 } catch(e) {
     console.log('error parsing NUMJIS JSON: ' + e.message);
@@ -24,9 +23,8 @@ try {
 //#####################################
 // GEOMETRY
 //#####################################
-
 {% for g in GEOMETRY.viewitems() %}
-    geometryDict['{{g[0]}}'] = {{g1}};{% endfor %}
+geometryDict['{{g[0]}}'] = new {{g[1]}};{% endfor %}
 
 //#####################################
 // MATERIALS

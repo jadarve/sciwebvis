@@ -1,0 +1,1 @@
+SCIWIS.Geometry({ {% for attrb, dataID in ATTRIBUTES.viewitems() %}'{{attrb}}': dataDict['{{dataID}}'], {% endfor %} })

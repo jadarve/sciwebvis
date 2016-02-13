@@ -11,7 +11,7 @@ class Geometry
     ###
     attributes : null
 
-    constructor: () ->
+    constructor: (prop) ->
 
         # dictionary containing geometry attributes
         @attritubutes = new Array()

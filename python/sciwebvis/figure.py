@@ -15,6 +15,7 @@ import numjis as nj
 
 from .JSRenderable import JSRenderable
 from . import material
+from . import geometry
 from .color import Color
 from .util import generateID
 
@@ -127,7 +128,7 @@ class Figure(JSRenderable):
         TypeError : if type(geom) != Geometry
         """
 
-        if type(geom) != Geometry:
+        if type(geom) != geometry.Geometry:
             raise TypeError('geom parameter should be of type Geometry')
 
         # check if geom already exists
@@ -174,12 +175,11 @@ class Figure(JSRenderable):
 
         # if code reaches this point, a new material needs to be added
 
-        matID = generateID(self.__materialDict.keys())
-        # configure material to this figure
-        # m.addToFigure(self)
+        m.ID = generateID(self.__materialDict.keys())
+        
 
         # add material to dictionary
-        self.__materialDict[matID] = m
+        self.__materialDict[m.ID] = m
 
         return m
 
@@ -197,8 +197,6 @@ class Figure(JSRenderable):
 
 
     def render(self):
-
-        
 
         #####################
         # GEOMETRY
