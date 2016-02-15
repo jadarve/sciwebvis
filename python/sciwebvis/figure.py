@@ -404,8 +404,8 @@ class Axes(JSRenderable):
 
     def scatter(self, vertex, **kwargs):
 
-        if type(vertex) != np.ndarray:
-            raise TypeError('Expecting a Numpy NDArray object')
+        # if type(vertex) != np.ndarray:
+        #     raise TypeError('Expecting a Numpy NDArray object')
 
         # adds a Scatter render object
         self.__renderObjects.append(Scatter(self, vertex, **kwargs))
@@ -413,8 +413,8 @@ class Axes(JSRenderable):
 
     def mesh(self, vertex, **kwargs):
         
-        if type(vertex) != np.ndarray:
-            raise TypeError('Expecting a Numpy NDArray object')
+        # if type(vertex) != np.ndarray:
+        #     raise TypeError('Expecting a Numpy NDArray object')
 
         # adds a Mesh render object
         self.__renderObjects.append(Mesh(self, vertex, **kwargs))
@@ -426,8 +426,17 @@ class Scatter(JSRenderable):
 
         self.__axes = axes
 
-        # add vertex array to data sources
-        self.__dataID = self.__axes.addData(vertex)
+        if type(vertex) == np.ndarray:
+            # geometry parameter correspons to vertex position.
+            # create a geometry object and add vertex position.
+            geom = geometry.Geometry()
+            geom['position'] = vertex
+            self.__geometry = axes.addGeometry(geom)
+
+
+        if type(vertex) == geometry.Geometry:
+            # register the geometry to the axes/figure
+            self.__geometry = axes.addGeometry(vertex)
 
         # unroll kwargs
         self.__properties = dict()
@@ -441,7 +450,7 @@ class Scatter(JSRenderable):
     def render(self):
 
         renderTemplate = _templateEnv.get_template('js/scatter.js')
-        JScode = renderTemplate.render(vertex = self.__dataID,
+        JScode = renderTemplate.render(geometry = self.__geometry.ID,
             material=self.__properties['material'].ID)
 
         return JScode
@@ -455,7 +464,6 @@ class Mesh(JSRenderable):
 
         if type(vertex) == np.ndarray:
             # geometry parameter correspons to vertex position.
-
             # create a geometry object and add vertex position.
             geom = geometry.Geometry()
             geom['position'] = vertex
@@ -465,9 +473,6 @@ class Mesh(JSRenderable):
         if type(vertex) == geometry.Geometry:
             # register the geometry to the axes/figure
             self.__geometry = axes.addGeometry(vertex)
-
-        # add vertex array to data sources
-        # self.__dataID = self.__axes.addData(vertex)
 
         # unroll kwargs
         self.__properties = dict()
@@ -485,6 +490,32 @@ class Mesh(JSRenderable):
 
         return JScode
 
+
+# class Scatter(JSRenderable):
+
+#     def __init__(self, axes, vertex, **kwargs):
+
+#         self.__axes = axes
+
+#         # add vertex array to data sources
+#         self.__dataID = self.__axes.addData(vertex)
+
+#         # unroll kwargs
+#         self.__properties = dict()
+#         self.__properties['material'] = kwargs.pop('material', material.PointMaterial())
+
+
+#         # add material to axes
+#         axes.addMaterial(self.__properties['material'])
+
+
+#     def render(self):
+
+#         renderTemplate = _templateEnv.get_template('js/scatter.js')
+#         JScode = renderTemplate.render(vertex = self.__dataID,
+#             material=self.__properties['material'].ID)
+
+#         return JScode
 
 # class Mesh(JSRenderable):
 
