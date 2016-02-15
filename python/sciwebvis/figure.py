@@ -19,7 +19,7 @@ from . import geometry
 from .color import Color
 from .util import generateID
 
-__all__ = ['Figure', 'Axes', 'Scatter', 'Surface']
+__all__ = ['Figure', 'Axes', 'Scatter', 'Mesh']
 
 # template Environment object
 _templateEnv = Environment(loader=PackageLoader('sciwebvis', 'templates'))
@@ -143,6 +143,7 @@ class Figure(JSRenderable):
         # generate a new ID
         geomID = generateID(self.__geometryDict.keys())
         self.__geometryDict[geomID] = geom
+        geom.ID = geomID
         return geom
 
 
@@ -340,6 +341,27 @@ class Axes(JSRenderable):
         return self.__fig.addData(data)
 
 
+    def addGeometry(self, geom):
+        """Adds a new Geometry object to the figure.
+
+        Parameters
+        ----------
+        geom : Geometry.
+            Geometry object.
+
+        Returns
+        -------
+        geom : Geometry.
+            Same geometry parameter.
+
+        Raises
+        ------
+        TypeError : if type(geom) != Geometry
+        """
+
+        return self.__fig.addGeometry(geom)
+
+
     def addMaterial(self, material):
         """
         Add a new material to axes.
@@ -389,13 +411,13 @@ class Axes(JSRenderable):
         self.__renderObjects.append(Scatter(self, vertex, **kwargs))
 
 
-    def surface(self, vertex, **kwargs):
+    def mesh(self, vertex, **kwargs):
         
         if type(vertex) != np.ndarray:
             raise TypeError('Expecting a Numpy NDArray object')
 
-        # adds a Surface render object
-        self.__renderObjects.append(Surface(self, vertex, **kwargs))
+        # adds a Mesh render object
+        self.__renderObjects.append(Mesh(self, vertex, **kwargs))
 
 
 class Scatter(JSRenderable):
@@ -425,14 +447,27 @@ class Scatter(JSRenderable):
         return JScode
 
 
-class Surface(JSRenderable):
+class Mesh(JSRenderable):
 
     def __init__(self, axes, vertex, **kwargs):
         
         self.__axes = axes
 
+        if type(vertex) == np.ndarray:
+            # geometry parameter correspons to vertex position.
+
+            # create a geometry object and add vertex position.
+            geom = geometry.Geometry()
+            geom['position'] = vertex
+            self.__geometry = axes.addGeometry(geom)
+
+
+        if type(vertex) == geometry.Geometry:
+            # register the geometry to the axes/figure
+            self.__geometry = axes.addGeometry(vertex)
+
         # add vertex array to data sources
-        self.__dataID = self.__axes.addData(vertex)
+        # self.__dataID = self.__axes.addData(vertex)
 
         # unroll kwargs
         self.__properties = dict()
@@ -444,11 +479,37 @@ class Surface(JSRenderable):
 
     def render(self):
 
-        renderTemplate = _templateEnv.get_template('js/surface.js')
-        JScode = renderTemplate.render(vertex = self.__dataID,
+        renderTemplate = _templateEnv.get_template('js/mesh.js')
+        JScode = renderTemplate.render(geometry = self.__geometry.ID,
             material = self.__properties['material'].ID)
 
         return JScode
+
+
+# class Mesh(JSRenderable):
+
+#     def __init__(self, axes, vertex, **kwargs):
+        
+#         self.__axes = axes
+
+#         # add vertex array to data sources
+#         self.__dataID = self.__axes.addData(vertex)
+
+#         # unroll kwargs
+#         self.__properties = dict()
+#         self.__properties['material'] = kwargs.pop('material', material.WireframeMaterial())
+
+
+#         # add material to axes
+#         axes.addMaterial(self.__properties['material'])
+
+#     def render(self):
+
+#         renderTemplate = _templateEnv.get_template('js/mesh.js')
+#         JScode = renderTemplate.render(vertex = self.__dataID,
+#             material = self.__properties['material'].ID)
+
+#         return JScode
     
 
 # class Surface(JSRenderable):

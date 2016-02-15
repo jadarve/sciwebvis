@@ -1,1 +1,0 @@
-axes.addObject(new SCIWIS.Surface({vertex : dataDict['{{vertex}}'], material : materialDict['{{material}}']}));
