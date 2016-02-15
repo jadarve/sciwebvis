@@ -11,15 +11,26 @@ class Geometry
     ###
     attributes : null
 
+
+    ###
+    @property [THREE.BufferGeometry] geometry BufferGeometry object.
+      This object makes the link between SCIWIS Geometry and the
+      renderer.
+    ###
+    geometry : null
+
+
     constructor: (attributes) ->
 
         # dictionary containing geometry attributes
         @attributes = new Array()
+        @geometry = new THREE.BufferGeometry()
 
         # unroll attributes
         for name, arr of attributes
             console.log('Geometry.constructor. Adding attribute: ' + name)
             @addAttribute(name, arr)
+
 
     ###
     Add a new attribute to the geometry
@@ -39,7 +50,27 @@ class Geometry
         @attributes[name] = arr
 
 
+        # create attribute
+        # attrbSize = arr.shape[arr.ndim-1]
+        attrbSize = switch name
+            when 'index' then 1
+            else arr.shape[arr.ndim-1]
+
+        attrb = new THREE.BufferAttribute(arr.data, attrbSize)
+
+        if name == 'index'
+            # index needs to be set using setIndex method
+            @geometry.setIndex(attrb)
+        else
+            # add attribute to geometry
+            @geometry.addAttribute(name, attrb)
+
+
+    ###
+    return true if the given attribute name is present in the geometry.
+    ###
     hasAttribute: (name) ->
+
         return @attributes[name]?
 
 
@@ -48,39 +79,44 @@ class Geometry
     ###
     getBufferGeometry: () ->
 
-        geom = new THREE.BufferGeometry()
+        return @geometry
 
-        for name, arr of @attributes
 
-            console.log('Geometry.getBufferGeometry(): attribute: ' + name + ' shape: ' + arr.shape)
+    # getBufferGeometry: () ->
 
-            # check if arr is instance of NJ.NDarray
-            if !arr instanceof NJ.NDArray
-                throw new SCIWIS.SciwisException('attribute should be instante of NDArray, attribute: ' + name)
+    #     geom = new THREE.BufferGeometry()
 
-            # attribute item size is equal to the size of
-            # last dimension of arr
-            attrbSize = arr.shape[arr.ndim-1]
+    #     for name, arr of @attributes
+
+    #         console.log('Geometry.getBufferGeometry(): attribute: ' + name + ' shape: ' + arr.shape)
+
+    #         # check if arr is instance of NJ.NDarray
+    #         if !arr instanceof NJ.NDArray
+    #             throw new SCIWIS.SciwisException('attribute should be instante of NDArray, attribute: ' + name)
+
+    #         # attribute item size is equal to the size of
+    #         # last dimension of arr
+    #         attrbSize = arr.shape[arr.ndim-1]
             
-            # attrbSize = switch name
-            #     when 'position' then 3
-            #     when 'uv' then 2
-            #     when 'index' then 1
-            #     else throw new SCIWIS.SciwisException('unknown attribute name: ' + name)
+    #         # attrbSize = switch name
+    #         #     when 'position' then 3
+    #         #     when 'uv' then 2
+    #         #     when 'index' then 1
+    #         #     else throw new SCIWIS.SciwisException('unknown attribute name: ' + name)
 
 
-            # create attribute
-            attrb = new THREE.BufferAttribute(arr.data, attrbSize)
+    #         # create attribute
+    #         attrb = new THREE.BufferAttribute(arr.data, attrbSize)
 
-            if name == 'index'
-                # index needs to be set using setIndex method
-                geom.setIndex(attrb)
-            else
-                # add attribute to geometry
-                geom.addAttribute(name, attrb)
+    #         if name == 'index'
+    #             # index needs to be set using setIndex method
+    #             geom.setIndex(attrb)
+    #         else
+    #             # add attribute to geometry
+    #             geom.addAttribute(name, attrb)
 
 
-        return geom
+    #     return geom
 
 
 module.exports =
