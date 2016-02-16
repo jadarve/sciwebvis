@@ -404,18 +404,12 @@ class Axes(JSRenderable):
 
     def scatter(self, vertex, **kwargs):
 
-        # if type(vertex) != np.ndarray:
-        #     raise TypeError('Expecting a Numpy NDArray object')
-
         # adds a Scatter render object
         self.__renderObjects.append(Scatter(self, vertex, **kwargs))
 
 
     def mesh(self, vertex, **kwargs):
         
-        # if type(vertex) != np.ndarray:
-        #     raise TypeError('Expecting a Numpy NDArray object')
-
         # adds a Mesh render object
         self.__renderObjects.append(Mesh(self, vertex, **kwargs))
 
@@ -490,119 +484,3 @@ class Mesh(JSRenderable):
 
         return JScode
 
-
-# class Scatter(JSRenderable):
-
-#     def __init__(self, axes, vertex, **kwargs):
-
-#         self.__axes = axes
-
-#         # add vertex array to data sources
-#         self.__dataID = self.__axes.addData(vertex)
-
-#         # unroll kwargs
-#         self.__properties = dict()
-#         self.__properties['material'] = kwargs.pop('material', material.PointMaterial())
-
-
-#         # add material to axes
-#         axes.addMaterial(self.__properties['material'])
-
-
-#     def render(self):
-
-#         renderTemplate = _templateEnv.get_template('js/scatter.js')
-#         JScode = renderTemplate.render(vertex = self.__dataID,
-#             material=self.__properties['material'].ID)
-
-#         return JScode
-
-# class Mesh(JSRenderable):
-
-#     def __init__(self, axes, vertex, **kwargs):
-        
-#         self.__axes = axes
-
-#         # add vertex array to data sources
-#         self.__dataID = self.__axes.addData(vertex)
-
-#         # unroll kwargs
-#         self.__properties = dict()
-#         self.__properties['material'] = kwargs.pop('material', material.WireframeMaterial())
-
-
-#         # add material to axes
-#         axes.addMaterial(self.__properties['material'])
-
-#     def render(self):
-
-#         renderTemplate = _templateEnv.get_template('js/mesh.js')
-#         JScode = renderTemplate.render(vertex = self.__dataID,
-#             material = self.__properties['material'].ID)
-
-#         return JScode
-    
-
-# class Surface(JSRenderable):
-
-#     def __init__(self, axes, dataID, **kwargs):
-
-#         self.__axes = axes
-#         self.__dataID = dataID
-
-#         # unroll kwargs
-
-#         # TODO: add color management
-#         self.__color = kwargs.get('color', '0x01BA23')
-#         self.__wireframe = str(kwargs.get('wireframe', False)).lower()
-#         self.__wirewidth = kwargs.get('wirewidth', 0.01)
-
-#         self.__hasTexture = True if 'texture' in  kwargs.keys() else False
-
-#         ###############################
-#         # TEXTURE VALIDATION
-#         ###############################
-#         self.__textureID = None
-
-#         if self.__hasTexture:
-            
-#             # validate texture and create data source
-#             texData = kwargs['texture']
-#             if self.__validateTexture(texData):
-
-#                 # create data source for texture
-#                 self.__textureID = self.__axes.addData(texData)
-                
-
-#     def render(self):
-
-#         renderTemplate = _templateEnv.get_template('js/surface3D.js')
-#         JScode = renderTemplate.render(
-#             vertex = self.__dataID,
-#             color = self.__color,
-#             wireframe = self.__wireframe,
-#             wirewidth = self.__wirewidth,
-#             hasTexture = self.__hasTexture,
-#             textureID = self.__textureID
-#             )
-
-#         return JScode
-
-
-#     def __validateTexture(self, texData):
-
-#         # check texture object type
-#         if type(texData) != np.ndarray:
-#             raise TypeError('Texture data should be a Numpy ndarray object')
-
-#         # check texture dimensions
-#         if not texData.ndim in [2, 3]:
-#             raise ValueError('Expecting 2 or three dimentional nd array')
-
-#         # check texture channels
-#         if texData.ndim == 3:
-#             channels = texData.shape[2]
-#             if not channels in [1, 3, 4]:
-#                 raise ValueError('Texture channels musht be [1, 3, 4], got: ' + depth)
-
-#         return True

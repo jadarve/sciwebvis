@@ -82,42 +82,5 @@ class Geometry
         return @geometry
 
 
-    # getBufferGeometry: () ->
-
-    #     geom = new THREE.BufferGeometry()
-
-    #     for name, arr of @attributes
-
-    #         console.log('Geometry.getBufferGeometry(): attribute: ' + name + ' shape: ' + arr.shape)
-
-    #         # check if arr is instance of NJ.NDarray
-    #         if !arr instanceof NJ.NDArray
-    #             throw new SCIWIS.SciwisException('attribute should be instante of NDArray, attribute: ' + name)
-
-    #         # attribute item size is equal to the size of
-    #         # last dimension of arr
-    #         attrbSize = arr.shape[arr.ndim-1]
-            
-    #         # attrbSize = switch name
-    #         #     when 'position' then 3
-    #         #     when 'uv' then 2
-    #         #     when 'index' then 1
-    #         #     else throw new SCIWIS.SciwisException('unknown attribute name: ' + name)
-
-
-    #         # create attribute
-    #         attrb = new THREE.BufferAttribute(arr.data, attrbSize)
-
-    #         if name == 'index'
-    #             # index needs to be set using setIndex method
-    #             geom.setIndex(attrb)
-    #         else
-    #             # add attribute to geometry
-    #             geom.addAttribute(name, attrb)
-
-
-    #     return geom
-
-
 module.exports =
     Geometry : Geometry
