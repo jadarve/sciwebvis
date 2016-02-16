@@ -175,9 +175,44 @@ class TextureMaterial
             })
 
 
+class ShaderMaterial
+
+    constructor: (prop) ->
+
+         # test for undefined prop
+        if not prop?
+            throw new SCIWIS.SciwisException('ShaderMaterial.constructor(): Undefined prop parameter')
+
+        if not prop['vertex']?
+            throw new SCIWIS.SciwisException('Undefined vertex shader property')
+
+        if not prop['fragment']?
+            throw new SCIWIS.SciwisException('Undefined fragment shader property')
+
+
+        @vertexCode = prop['vertex']
+        @fragmentCode = prop['fragment']
+
+        # uniforms is optional
+        @uniforms = if prop['uniforms']? then prop['uniforms'] else new Array()
+
+        # transparent is optional
+        @transparent = if prop['transparent']? then prop['transparent'] else false
+
+
+    get: () ->
+        
+        return new THREE.ShaderMaterial({
+            vertexShader : @vertexCode
+            fragmentShader : @fragmentCode
+            transparent : @transparent
+            uniforms: @uniforms})
+
+
 module.exports =
 
     Material : Material
     PointMaterial : PointMaterial
     WireframeMaterial : WireframeMaterial
     TextureMaterial : TextureMaterial
+    ShaderMaterial : ShaderMaterial
