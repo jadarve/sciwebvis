@@ -18,7 +18,8 @@ meshUV = (arr) ->
     for r in [0...height]
         for c in [0...width]
             UV.data[UV.flat([r, c, 0])] = c / (width-1)
-            UV.data[UV.flat([r, c, 1])] = (height-1-r) / (height-1)
+            # UV.data[UV.flat([r, c, 1])] = (height-1-r) / (height-1)
+            UV.data[UV.flat([r, c, 1])] = r / (height-1)
 
     return UV
 

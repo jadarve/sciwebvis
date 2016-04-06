@@ -65,7 +65,7 @@ void main() {
     //gl_FragColor = vec4(lum.x, lum.x, lum.x, 1.0);
 
     //gl_FragColor = texture2D(textureSampler, vertexUV);
-    gl_FragColor = lum*vec4(1.0, 0.0, 0.0, 0.0);
+    gl_FragColor = lum*vec4(1.0, 1.0, 1.0, 0.0);
 }
 """
 
@@ -170,6 +170,7 @@ class TextureMaterial
             vertexShader : TextureMaterial_vertex
             fragmentShader : TextureMaterial_fragment
             transparent : false
+            side : THREE.DoubleSide
             uniforms:
                 textureSampler : {type : 't', value : tex}
             })
