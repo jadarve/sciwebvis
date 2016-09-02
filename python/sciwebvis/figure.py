@@ -265,9 +265,11 @@ class Figure(JSRenderable):
         # NOTE: r69 in Google CDN does not work creating Three.Points objects.
         #   No idea of why.
 
-        libs = [#'https://ajax.googleapis.com/ajax/libs/threejs/r69/three.min.js',
-                'http://threejs.org/build/three.min.js',
+        libs = ['https://ajax.googleapis.com/ajax/libs/threejs/r75/three.min.js',
+                # 'http://threejs.org/build/three.min.js',
                 'http://threejs.org/examples/js/controls/OrbitControls.js',
+                # './js/OrbitControls.js',
+                # './js/three.js',
                 './js/numjis_bundle.js',
                 './js/sciwis_bundle.js']
         JS = display.Javascript(data = JScode, lib = libs)
