@@ -5,7 +5,9 @@ var axesProp = {
     width : {{prop['size'][0]}},
     height : {{prop['size'][1]}},
     bgcolor : 0xF0F0F0,
-    color : new SCIWIS.Color(0.9375, 0.9375, 0.9375)
+    // color : new SCIWIS.Color(0.9375, 0.9375, 0.9375)
+    // color : new SCIWIS.Color(1.0, 1.0, 1.0)
+    color : new {{prop['bgcolor'].render()}}
 };
 
 // TODO: name axes in consecutive order to support multiple axes per figure.
